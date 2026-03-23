@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gabarito UNIP</title>
+  <link rel="stylesheet" href="gabarito.css">
+</head>
+<body>
+
+  <!-- INPUT -->
+  <div class="input-screen" id="inputScreen">
+    <h1>Gabarito UNIP</h1>
+    <p>Extraia as respostas corretas da pagina de revisao da prova.<br>
+       Escolha um dos metodos abaixo:</p>
+
+    <div class="methods">
+      <!-- Method 1: Load file -->
+      <div class="method-card">
+        <h3>Carregar arquivo</h3>
+        <p>Salve a pagina da prova (Ctrl+S) e carregue o arquivo .html aqui</p>
+        <label class="file-label" for="fileInput">Escolher arquivo</label>
+        <input type="file" id="fileInput" accept=".html,.htm">
+        <div class="file-name" id="fileName"></div>
+      </div>
+
+      <!-- Method 2: Paste source -->
+      <div class="method-card">
+        <h3>Colar codigo-fonte</h3>
+        <p>Abra o codigo-fonte da pagina (Ctrl+U) e copie tudo (Ctrl+A, Ctrl+C)</p>
+        <textarea id="pasteArea" placeholder="Cole o HTML aqui..."></textarea>
+        <br><br>
+        <button onclick="parseFromPaste()">Extrair</button>
+      </div>
+    </div>
+
+    <div class="error-msg" id="errorMsg"></div>
+  </div>
+
+  <!-- RESULT -->
+  <div class="result-screen" id="resultScreen">
+    <div class="result-header">
+      <h1>Gabarito</h1>
+      <div class="count" id="countLabel"></div>
+    </div>
+    <div class="gabarito-grid" id="grid"></div>
+    <button class="btn-back" onclick="goBack()">Voltar</button>
+  </div>
+
+  <script src="gabarito.js"></script>
+</body>
+</html>
