@@ -76,13 +76,13 @@ All font sizes use Tailwind v4 utility classes. Declare exactly 4 type roles for
 
 | Role | Size | Tailwind | Font Family | Weight | Line Height | Usage |
 |------|------|----------|-------------|--------|-------------|-------|
-| Display | 28px | `text-2xl` | Oxanium (`font-heading`) | 700 (`font-bold`) | 1.2 | App title "Corretor UNIP" |
+| Display | 28px | `text-2xl` | Oxanium (`font-heading`) | 600 (`font-semibold`) | 1.2 | App title "Corretor UNIP" |
 | Heading | 20px | `text-xl` | Montserrat (`font-sans`) | 600 (`font-semibold`) | 1.3 | Section labels ("Carregar arquivo", "Colar HTML") |
 | Body | 16px | `text-base` | Montserrat (`font-sans`) | 400 (`font-normal`) | 1.5 | Instructional copy, placeholder, helper text |
-| Label | 14px | `text-sm` | Montserrat (`font-sans`) | 500 (`font-medium`) | 1.4 | Form labels, mode toggle labels, error messages |
+| Label | 14px | `text-sm` | Montserrat (`font-sans`) | 400 (`font-normal`) | 1.4 | Form labels, mode toggle labels, error messages |
 
-**Weights in use: 400 (normal), 500 (medium), 600 (semibold), 700 (bold).**
-Executor note: weight 700 is used only for the Display role. Body and Label use 400/500. Semibold 600 is for section headings only.
+**Weights in use: 400 (normal), 600 (semibold).**
+Executor note: weight 600 is used for both Display and Heading roles. Body and Label use 400.
 
 ---
 
@@ -103,6 +103,8 @@ All color values reference the CSS custom properties already defined in `app/glo
 
 **OR separator:** Use `text-muted-foreground` + `border-border` via the shadcn `Separator` component. Not styled with accent.
 
+Primary visual anchor: the "Corrigir prova" submit button at the bottom of the input form.
+
 ---
 
 ## Component Map
@@ -113,7 +115,7 @@ Exact shadcn components assigned to each UI element. Executor must not substitut
 
 | UI Element | shadcn Component | Variant / Notes |
 |------------|-----------------|-----------------|
-| App title | — | `<h1>` with `font-heading text-2xl font-bold` Tailwind classes |
+| App title | — | `<h1>` with `font-heading text-2xl font-semibold` Tailwind classes |
 | Page subtitle / instruction | — | `<p>` with `text-base text-muted-foreground` |
 | File upload area | `Card` | Full card as clickable drop zone; `CardContent` with dashed `border-dashed border-border` override; hidden `<input type="file" accept=".html,.htm">` inside |
 | Upload icon | Phosphor `UploadSimple` | `size-8 text-muted-foreground` inside drop zone |
