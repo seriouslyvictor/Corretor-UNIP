@@ -27,7 +27,7 @@
 
 Plans:
 - [x] 01-01: Install dependencies — Add ai@^6.0.0, @ai-sdk/google@^3.0.0, zod@^3.23.8 via pnpm; configure GOOGLE_GENERATIVE_AI_API_KEY in .env.local
-- [ ] 01-02: Port parser to TypeScript — Translate gabarito.js DOM-parsing logic into lib/parser.ts with image extraction
+- [x] 01-02: Port parser to TypeScript — Translate gabarito.js DOM-parsing logic into lib/parser.ts with image extraction
 - [ ] 01-03: HTML input UI — Build app/page.tsx as interactive Client Component with file upload and paste textarea
 
 ### Phase 2: LLM Integration

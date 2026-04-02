@@ -9,8 +9,8 @@
 
 - [ ] **INPUT-01**: User can upload a saved UNIP `.html` file and have it parsed client-side
 - [ ] **INPUT-02**: User can paste raw HTML source into a textarea and have it parsed client-side
-- [ ] **INPUT-03**: Parser extracts question number, question text, all answer options (letter + text), and embedded images from the UNIP DOM structure (`li.liItem`, `.vtbegenerated p`, `.answerNumLabelSpan`, `.answerTextSpan`)
-- [ ] **INPUT-04**: Images within questions are extracted as base64 strings and included in the LLM payload
+- [x] **INPUT-03**: Parser extracts question number, question text, all answer options (letter + text), and embedded images from the UNIP DOM structure (`li.liItem`, `.vtbegenerated p`, `.answerNumLabelSpan`, `.answerTextSpan`)
+- [x] **INPUT-04**: Images within questions are extracted as base64 strings and included in the LLM payload
 
 ### Solving
 
