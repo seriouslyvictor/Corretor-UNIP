@@ -35,9 +35,9 @@
 
 ### Infrastructure
 
-- [ ] **INFRA-01**: Vercel AI SDK (`ai@^6.0.0`, `@ai-sdk/google@^3.0.0`) installed and configured
-- [ ] **INFRA-02**: `GOOGLE_GENERATIVE_AI_API_KEY` consumed from environment variables server-side only
-- [ ] **INFRA-03**: API key never exposed to the client
+- [x] **INFRA-01**: Vercel AI SDK (`ai@^6.0.0`, `@ai-sdk/google@^3.0.0`) installed and configured
+- [x] **INFRA-02**: `GOOGLE_GENERATIVE_AI_API_KEY` consumed from environment variables server-side only
+- [x] **INFRA-03**: API key never exposed to the client
 
 ## v2 Requirements
 
@@ -73,7 +73,7 @@
 |-------------|-------|--------|
 | INPUT-01, INPUT-02 | Phase 1 | Pending |
 | INPUT-03, INPUT-04 | Phase 1 | Pending |
-| INFRA-01, INFRA-02, INFRA-03 | Phase 1 | Pending |
+| INFRA-01, INFRA-02, INFRA-03 | Phase 1 | Complete (01-01) |
 | SOLVE-01, SOLVE-02, SOLVE-03 | Phase 2 | Pending |
 | SOLVE-04, SOLVE-05 | Phase 2 | Pending |
 | MODE-01, MODE-02, MODE-03 | Phase 2 | Pending |
