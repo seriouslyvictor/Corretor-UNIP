@@ -26,7 +26,7 @@
 **Plans**: 3 plans
 
 Plans:
-- [ ] 01-01: Install dependencies — Add ai@^6.0.0, @ai-sdk/google@^3.0.0, zod@^3.23.8 via pnpm; configure GOOGLE_GENERATIVE_AI_API_KEY in .env.local
+- [x] 01-01: Install dependencies — Add ai@^6.0.0, @ai-sdk/google@^3.0.0, zod@^3.23.8 via pnpm; configure GOOGLE_GENERATIVE_AI_API_KEY in .env.local
 - [ ] 01-02: Port parser to TypeScript — Translate gabarito.js DOM-parsing logic into lib/parser.ts with image extraction
 - [ ] 01-03: HTML input UI — Build app/page.tsx as interactive Client Component with file upload and paste textarea
 
@@ -96,7 +96,7 @@ Plans:
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1 — Foundation | 0/3 | Not started | - |
+| 1 — Foundation | 1/3 | In progress | - |
 | 2 — LLM Integration | 0/2 | Not started | - |
 | 3 — Gabarito UI | 0/2 | Not started | - |
 
