@@ -87,7 +87,7 @@ export default function Page() {
     [readFile]
   );
 
-  const handleSubmit = useCallback(() => {
+  const handleSubmit = useCallback(async () => {
     const rawHTML = uploadedHTML || pasteHTML.trim();
     if (!rawHTML) {
       setError(
@@ -108,8 +108,36 @@ export default function Page() {
     setParsedQuestions(questions);
     setIsSubmitting(true);
     setPageState("loading");
-    devLog(`Entering loading state — mode: ${mode}, questions: ${questions.length} (Phase 2 API call pending)`);
-    // Phase 2 will add the API call here
+    devLog(`Entering loading state — mode: ${mode}, questions: ${questions.length}`);
+
+    try {
+      const response = await fetch("/api/solve", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ mode, questions }),
+      });
+
+      if (!response.ok) {
+        const errBody = await response.json().catch(() => null);
+        throw new Error(errBody?.error || `API error: ${response.status}`);
+      }
+
+      // Store the raw streaming response text for Phase 3 to consume
+      // For now, read the full stream and parse the result
+      const text = await response.text();
+      devLog("API response:", text);
+
+      // Phase 3 will implement progressive streaming UI.
+      // For now, just log success and stay in loading state.
+      // The gabarito page (Phase 3) will consume this data.
+      devLog("Solve complete");
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Erro ao resolver questões.";
+      setError(message);
+      setPageState("input");
+      setIsSubmitting(false);
+      devLog("API error:", err);
+    }
   }, [uploadedHTML, pasteHTML, mode]);
 
   if (pageState === "loading") {
