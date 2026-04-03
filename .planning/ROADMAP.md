@@ -8,7 +8,7 @@
 
 ## Phases
 
-- [ ] **Phase 1: Foundation** - Parser TypeScript port, HTML input UI, dependency install
+- [x] **Phase 1: Foundation** - Parser TypeScript port, HTML input UI, dependency install
 - [ ] **Phase 2: LLM Integration** - /api/solve route, Zod schemas, Gemini streaming, modes
 - [ ] **Phase 3: Gabarito UI** - Results page, grid display, verbose cards, loading/error states
 
@@ -28,7 +28,7 @@
 Plans:
 - [x] 01-01: Install dependencies — Add ai@^6.0.0, @ai-sdk/google@^3.0.0, zod@^3.23.8 via pnpm; configure GOOGLE_GENERATIVE_AI_API_KEY in .env.local
 - [x] 01-02: Port parser to TypeScript — Translate gabarito.js DOM-parsing logic into lib/parser.ts with image extraction
-- [ ] 01-03: HTML input UI — Build app/page.tsx as interactive Client Component with file upload and paste textarea
+- [x] 01-03: HTML input UI — Build app/page.tsx as interactive Client Component with file upload and paste textarea
 
 ### Phase 2: LLM Integration
 **Goal**: Parsed questions are sent to Gemini via a streaming API route and return a validated, typed array of answers — with mode selection (No BS / Verbose) and thinkingBudget routing baked in.
@@ -96,7 +96,7 @@ Plans:
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1 — Foundation | 1/3 | In progress | - |
+| 1 — Foundation | 3/3 | Complete | 2026-04-03 |
 | 2 — LLM Integration | 0/2 | Not started | - |
 | 3 — Gabarito UI | 0/2 | Not started | - |
 
