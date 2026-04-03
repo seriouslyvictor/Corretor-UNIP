@@ -14,11 +14,11 @@
 
 ### Solving
 
-- [ ] **SOLVE-01**: Parsed questions are sent in a single batch POST request to `/api/solve`
-- [ ] **SOLVE-02**: API route calls Google Gemini via Vercel AI SDK using `generateText` + `Output.array()` (AI SDK 6 pattern — `generateObject` is deprecated)
-- [ ] **SOLVE-03**: Responses are structured per-question: `{ number, answer, explanation? }` validated with Zod
+- [x] **SOLVE-01**: Parsed questions are sent in a single batch POST request to `/api/solve`
+- [x] **SOLVE-02**: API route calls Google Gemini via Vercel AI SDK using `generateText` + `Output.array()` (AI SDK 6 pattern — `generateObject` is deprecated)
+- [x] **SOLVE-03**: Responses are structured per-question: `{ number, answer, explanation? }` validated with Zod
 - [ ] **SOLVE-04**: LLM routing via `thinkingBudget` on `gemini-2.5-flash` — `0` for fact-recall questions, `-1` (dynamic) for reasoning-heavy questions; detection via a lightweight classifier prompt or heuristic
-- [ ] **SOLVE-05**: Streaming response used so partial results appear progressively (avoids Vercel Hobby 10s timeout)
+- [x] **SOLVE-05**: Streaming response used so partial results appear progressively (avoids Vercel Hobby 10s timeout)
 
 ### Modes
 

@@ -9,7 +9,7 @@
 ## Phases
 
 - [ ] **Phase 1: Foundation** - Parser TypeScript port, HTML input UI, dependency install
-- [ ] **Phase 2: LLM Integration** - /api/solve route, Zod schemas, Gemini streaming, modes
+- [x] **Phase 2: LLM Integration** - /api/solve route, Zod schemas, Gemini streaming, modes (completed 2026-04-03)
 - [ ] **Phase 3: Gabarito UI** - Results page, grid display, verbose cards, loading/error states
 
 ## Phase Details
@@ -43,7 +43,7 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 02-01: Zod schemas and solve route — lib/schemas.ts + POST /api/solve using streamText + Output.array()
+- [x] 02-01: Zod schemas and solve route — lib/schemas.ts + POST /api/solve using streamText + Output.array()
 - [ ] 02-02: Modes and thinking routing — mode param wiring, prompt builder, thinkingBudget heuristic, mode selector UI
 
 ### Phase 3: Gabarito UI
@@ -97,7 +97,7 @@ Plans:
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1 — Foundation | 0/3 | Not started | - |
-| 2 — LLM Integration | 0/2 | Not started | - |
+| 2 — LLM Integration | 1/1 | Complete   | 2026-04-03 |
 | 3 — Gabarito UI | 0/2 | Not started | - |
 
 ---
