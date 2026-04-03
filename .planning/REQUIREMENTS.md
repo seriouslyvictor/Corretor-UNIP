@@ -17,7 +17,7 @@
 - [ ] **SOLVE-01**: Parsed questions are sent in a single batch POST request to `/api/solve`
 - [ ] **SOLVE-02**: API route calls Google Gemini via Vercel AI SDK using `generateText` + `Output.array()` (AI SDK 6 pattern — `generateObject` is deprecated)
 - [ ] **SOLVE-03**: Responses are structured per-question: `{ number, answer, explanation? }` validated with Zod
-- [ ] **SOLVE-04**: LLM routing via `thinkingBudget` on `gemini-2.5-flash` — `0` for fact-recall questions, `-1` (dynamic) for reasoning-heavy questions; detection via a lightweight classifier prompt or heuristic
+- [x] **SOLVE-04**: LLM routing via `thinkingBudget` on `gemini-2.5-flash` — `0` for fact-recall questions, `-1` (dynamic) for reasoning-heavy questions; detection via a lightweight classifier prompt or heuristic. `solvedAnswers` state wired in `app/page.tsx`; ndjson streaming parsed per-line with Zod validation.
 - [ ] **SOLVE-05**: Streaming response used so partial results appear progressively (avoids Vercel Hobby 10s timeout)
 
 ### Modes
@@ -75,7 +75,7 @@
 | INPUT-03, INPUT-04 | Phase 1 | Pending |
 | INFRA-01, INFRA-02, INFRA-03 | Phase 1 | Pending |
 | SOLVE-01, SOLVE-02, SOLVE-03 | Phase 2 | Pending |
-| SOLVE-04, SOLVE-05 | Phase 2 | Pending |
+| SOLVE-04, SOLVE-05 | Phase 2 | SOLVE-04 complete |
 | MODE-01, MODE-02, MODE-03 | Phase 2 | Pending |
 | RESULT-01, RESULT-02 | Phase 3 | Pending |
 | RESULT-03, RESULT-04 | Phase 3 | Pending |
