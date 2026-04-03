@@ -1,10 +1,10 @@
 import { NextRequest } from "next/server";
-import { streamText, Output } from "ai";
-import { google } from "@ai-sdk/google";
+import { generateObject } from "ai";
 import { solvedAnswerSchema, solveRequestSchema } from "@/lib/schemas";
-import { buildPrompt } from "@/lib/prompts";
+import { buildSinglePrompt } from "@/lib/prompts";
+import { classifyQuestion, modelForTier } from "@/lib/router";
 
-export const maxDuration = 60;
+export const maxDuration = 300;
 
 export async function POST(req: NextRequest) {
   const body = await req.json();
@@ -12,66 +12,67 @@ export async function POST(req: NextRequest) {
 
   if (!parsed.success) {
     return new Response(
-      JSON.stringify({
-        error: "Invalid request",
-        details: parsed.error.flatten(),
-      }),
-      {
-        status: 400,
-        headers: { "Content-Type": "application/json" },
-      },
+      JSON.stringify({ error: "Invalid request", details: parsed.error.flatten() }),
+      { status: 400, headers: { "Content-Type": "application/json" } },
     );
   }
 
   const { mode, questions } = parsed.data;
-
-  const promptText = buildPrompt(questions, mode);
+  console.log(`[solve] mode=${mode} questions=${questions.length}`);
 
   type ContentPart =
     | { type: "text"; text: string }
     | { type: "image"; image: string; mimeType: "image/png" };
 
-  const textPart: ContentPart = {
-    type: "text",
-    text: promptText,
-  };
-
-  const imageParts: ContentPart[] = questions
-    .filter((q) => q.imageBase64 !== null)
-    .map((q) => ({
-      type: "image" as const,
-      image: q.imageBase64 as string,
-      mimeType: "image/png" as const,
-    }));
-
-  const content: ContentPart[] = [textPart, ...imageParts];
-
-  const result = streamText({
-    model: google("gemini-2.5-flash"),
-    output: Output.array({ element: solvedAnswerSchema }),
-    providerOptions: {
-      google: {
-        thinkingConfig: {
-          thinkingBudget: mode === "no-bs" ? 0 : -1,
-          includeThoughts: false,
-        },
-      },
-    },
-    messages: [{ role: "user", content }],
-  });
-
-  // Stream individual answer objects as newline-delimited JSON
   const stream = new ReadableStream({
     async start(controller) {
       const encoder = new TextEncoder();
-      try {
-        for await (const answer of result.elementStream) {
-          controller.enqueue(encoder.encode(JSON.stringify(answer) + "\n"));
+
+      for (const [i, question] of questions.entries()) {
+        const promptText = buildSinglePrompt(question, i, mode);
+
+        const content: ContentPart[] = [{ type: "text", text: promptText }];
+        if (question.imageBase64) {
+          content.push({ type: "image", image: question.imageBase64, mimeType: "image/png" });
         }
-        controller.close();
-      } catch (err) {
-        controller.error(err);
+
+        console.log(`\n[solve] ── Q${i + 1}/${questions.length} ──────────────────────`);
+
+        const tier = await classifyQuestion(question, i);
+        const model = modelForTier(tier);
+        console.log(`[solve] tier=${tier} model=${tier === "full" ? "gemini-2.5-flash-preview" : "gemini-2.5-flash-lite-preview"}`);
+        console.log(`[solve] prompt:\n${promptText}`);
+        if (question.imageBase64) {
+          console.log(`[solve] + image attached (${Math.round(question.imageBase64.length * 0.75 / 1024)} KB)`);
+        }
+
+        try {
+          const result = await generateObject({
+            model,
+            schema: solvedAnswerSchema,
+            providerOptions: {
+              google: {
+                thinkingConfig: {
+                  thinkingBudget: mode === "no-bs" ? 1024 : -1,
+                  includeThoughts: false,
+                },
+              },
+            },
+            messages: [{ role: "user", content }],
+          });
+
+          console.log(`[solve] answer: ${JSON.stringify(result.object)}`);
+          controller.enqueue(encoder.encode(JSON.stringify(result.object) + "\n"));
+        } catch (err) {
+          console.error(`[solve] Q${i + 1} failed:`, err);
+          // emit a low-confidence placeholder so the client isn't left hanging
+          const fallback = { questionIndex: i, answer: "A" as const, confidence: "low" as const };
+          controller.enqueue(encoder.encode(JSON.stringify(fallback) + "\n"));
+        }
       }
+
+      console.log(`[solve] ── done ──────────────────────────────`);
+      controller.close();
     },
   });
 

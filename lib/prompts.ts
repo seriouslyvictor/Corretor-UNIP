@@ -2,25 +2,22 @@ import type { ParsedQuestion } from "./schemas";
 
 type Mode = "no-bs" | "verbose";
 
-export function buildPrompt(questions: ParsedQuestion[], mode: Mode): string {
+export function buildSinglePrompt(question: ParsedQuestion, index: number, mode: Mode): string {
   const modeInstruction =
     mode === "no-bs"
-      ? "Return ONLY the correct answer letter for each question. Do NOT include explanations, reasoning, or any additional text."
-      : "Return the correct answer letter AND a brief explanation for each question. The explanation should say why the correct answer is right and briefly note why the other options are wrong.";
+      ? "Return ONLY the correct answer letter. Do NOT include explanations or reasoning."
+      : "Return the correct answer letter AND a brief explanation. Say why the correct answer is right and briefly note why the other options are wrong.";
 
-  const questionsBlock = questions
-    .map((q, i) => {
-      const opts = q.options.map((o) => `  ${o.letter}) ${o.text}`).join("\n");
-      const imgNote = q.imageBase64
-        ? "\n  [This question includes an accompanying image]"
-        : "";
-      return `[Question ${i}]\n${q.text}\n${opts}${imgNote}`;
-    })
-    .join("\n\n");
+  const opts = question.options.map((o) => `  ${o.letter}) ${o.text}`).join("\n");
+  const imgNote = question.imageBase64
+    ? "\n[This question includes an accompanying image above.]"
+    : "";
 
-  return `You are solving a Brazilian university (UNIP) multiple-choice exam.
+  return `You are solving a Brazilian university (UNIP) multiple-choice exam question.
 ${modeInstruction}
-There are ${questions.length} questions. For each, return a JSON object with questionIndex (0-based), answer (letter A-E), confidence (high|medium|low)${mode === "verbose" ? ", and explanation (string)" : ""}.
+Return a JSON object with: questionIndex (${index}, 0-based), answer (letter A-E), confidence (high|medium|low)${mode === "verbose" ? ", explanation (string)" : ""}.
 
-${questionsBlock}`;
+Question ${index + 1}:
+${question.text}
+${opts}${imgNote}`;
 }

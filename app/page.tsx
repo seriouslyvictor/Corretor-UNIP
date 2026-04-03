@@ -3,7 +3,7 @@
 import { useState, useRef } from "react";
 import { parseHTML } from "@/lib/parser";
 import type { ParsedQuestion, SolvedAnswer } from "@/lib/schemas";
-import { SolvedAnswerSchema } from "@/lib/schemas";
+import { solvedAnswerSchema } from "@/lib/schemas";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -105,7 +105,7 @@ export default function Page() {
           const trimmed = line.trim();
           if (!trimmed) continue;
           try {
-            const parsed = SolvedAnswerSchema.parse(JSON.parse(trimmed));
+            const parsed = solvedAnswerSchema.parse(JSON.parse(trimmed));
             setSolvedAnswers((prev) => [...prev, parsed]);
           } catch {
             // skip malformed lines
@@ -116,7 +116,7 @@ export default function Page() {
       // flush remaining buffer
       if (buffer.trim()) {
         try {
-          const parsed = SolvedAnswerSchema.parse(JSON.parse(buffer.trim()));
+          const parsed = solvedAnswerSchema.parse(JSON.parse(buffer.trim()));
           setSolvedAnswers((prev) => [...prev, parsed]);
         } catch {
           // skip
