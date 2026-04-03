@@ -44,7 +44,7 @@ Plans:
 
 Plans:
 - [x] 02-01: Zod schemas and solve route — lib/schemas.ts + POST /api/solve using streamText + Output.array()
-- [ ] 02-02: Modes and thinking routing — mode param wiring, prompt builder, thinkingBudget heuristic, mode selector UI
+- [x] 02-02: Modes and thinking routing — mode param wiring, prompt builder, thinkingBudget heuristic, mode selector UI
 
 ### Phase 3: Gabarito UI
 **Goal**: Users see a complete gabarito grid the moment answers stream in, with expandable explanation cards in Verbose mode and clear loading and error feedback throughout.
@@ -97,7 +97,7 @@ Plans:
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1 — Foundation | 0/3 | Not started | - |
-| 2 — LLM Integration | 1/1 | Complete   | 2026-04-03 |
+| 2 — LLM Integration | 2/2 | Complete   | 2026-04-03 |
 | 3 — Gabarito UI | 0/2 | Not started | - |
 
 ---
