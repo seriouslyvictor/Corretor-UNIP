@@ -6,62 +6,61 @@ export function parseHTML(rawHTML: string): ParsedQuestion[] {
   const parser = new DOMParser();
   const doc = parser.parseFromString(rawHTML, "text/html");
 
-  const items = doc.querySelectorAll("li.liItem");
+  // UNIP take-test page: each question is a div.takeQuestionDiv
+  const items = doc.querySelectorAll("div.takeQuestionDiv");
   if (items.length === 0) return [];
 
   const questions: ParsedQuestion[] = [];
 
   items.forEach((item) => {
-    const h3 = item.querySelector("h3");
+    // Question number from h3.steptitle: "Pergunta N"
+    const h3 = item.querySelector("h3.steptitle");
     if (!h3) return;
 
     const numMatch = h3.textContent?.match(/Pergunta\s+(\d+)/i);
     if (!numMatch) return;
     const number = parseInt(numMatch[1], 10);
 
-    // Extract question text from .vtbegenerated p elements
-    const textParagraphs = item.querySelectorAll(".vtbegenerated p");
+    // Question text from legend > .vtbegenerated p
+    const legend = item.querySelector("legend.legend-visible");
+    const textParagraphs = legend
+      ? legend.querySelectorAll(".vtbegenerated p")
+      : [];
     const text = Array.from(textParagraphs)
       .map((p) => p.textContent?.trim() ?? "")
       .filter(Boolean)
       .join("\n");
 
-    // Extract options from answer divs
-    const answerDivs = item.querySelectorAll(".reviewQuestionsAnswerDiv");
+    // Options from table.multiple-choice-table rows
+    const rows = item.querySelectorAll("table.multiple-choice-table tr");
     const options: ParsedOption[] = [];
-    const seenLetters = new Set<string>();
 
-    answerDivs.forEach((div) => {
-      const letterEl = div.querySelector(".answerNumLabelSpan");
-      const textEl = div.querySelector(".answerTextSpan");
-      if (!letterEl || !textEl) return;
+    rows.forEach((row) => {
+      const letterEl = row.querySelector("td.multiple-choice-numbering");
+      const textCell = row.querySelector("td:last-child .vtbegenerated p");
+      if (!letterEl || !textCell) return;
 
-      const letter = (letterEl.textContent?.trim() ?? "").replace(/\.$/, "");
-      if (!letter || seenLetters.has(letter)) return;
-      seenLetters.add(letter);
+      const letter = (letterEl.textContent?.trim() ?? "")
+        .replace(/\.$/, "")
+        .toUpperCase();
+      if (!letter) return;
 
       options.push({
         letter,
-        text: textEl.textContent?.trim() ?? "",
+        text: textCell.textContent?.trim() ?? "",
       });
     });
 
-    // Extract embedded image as base64
-    // Look for img tags in the question body (.vtbegenerated)
-    const questionBody = item.querySelector(".vtbegenerated");
+    // Image: look in the legend body (question stem) for data URI images
     let imageBase64: string | null = null;
-
-    if (questionBody) {
-      const img = questionBody.querySelector("img");
+    if (legend) {
+      const img = legend.querySelector("img");
       if (img) {
         const src = img.getAttribute("src") ?? "";
-        // UNIP embeds images as data URIs (data:image/png;base64,...) or relative URLs
         if (src.startsWith("data:")) {
-          // Extract the base64 part after the comma
           const commaIndex = src.indexOf(",");
           imageBase64 = commaIndex !== -1 ? src.slice(commaIndex + 1) : null;
         } else if (src) {
-          // For non-data-URI images, store the src as-is
           imageBase64 = src;
         }
       }

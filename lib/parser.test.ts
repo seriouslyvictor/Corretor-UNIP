@@ -1,44 +1,89 @@
 import { describe, it, expect } from "vitest";
 import { parseHTML } from "./parser";
 
+// Mirrors actual UNIP take-test page structure
 const FIXTURE_TWO_QUESTIONS = `
-<ul>
-  <li class="liItem">
-    <h3>Pergunta 1</h3>
-    <div class="vtbegenerated"><p>What is 2+2?</p></div>
-    <div class="reviewQuestionsAnswerDiv">
-      <span class="answerNumLabelSpan">A.</span>
-      <span class="answerTextSpan">3</span>
-    </div>
-    <div class="reviewQuestionsAnswerDiv">
-      <span class="answerNumLabelSpan">B.</span>
-      <span class="answerTextSpan">4</span>
-    </div>
-  </li>
-  <li class="liItem">
-    <h3>Pergunta 2</h3>
-    <div class="vtbegenerated"><p>Capital of Brazil?</p></div>
-    <div class="reviewQuestionsAnswerDiv">
-      <span class="answerNumLabelSpan">A.</span>
-      <span class="answerTextSpan">Brasilia</span>
-    </div>
-  </li>
-</ul>`;
+<div id="_q1_1" class="takeQuestionDiv">
+  <h3 id="steptitle1" class="steptitle">Pergunta 1</h3>
+  <div id="stepcontent1" class="stepcontent">
+    <ol role="presentation">
+      <li>
+        <div class="field">
+          <fieldset>
+            <legend class="legend-visible">
+              <div class="vtbegenerated inlineVtbegenerated"><p>What is 2+2?</p></div>
+            </legend>
+            <table class="multiple-choice-table">
+              <tbody>
+                <tr>
+                  <td class="multiple-option-row"><input type="radio"></td>
+                  <td class="multiple-choice-numbering multiple-option-row">a.</td>
+                  <td><div class="vtbegenerated inlineVtbegenerated"><label><p>3</p></label></div></td>
+                </tr>
+                <tr>
+                  <td class="multiple-option-row"><input type="radio"></td>
+                  <td class="multiple-choice-numbering multiple-option-row">b.</td>
+                  <td><div class="vtbegenerated inlineVtbegenerated"><label><p>4</p></label></div></td>
+                </tr>
+              </tbody>
+            </table>
+          </fieldset>
+        </div>
+      </li>
+    </ol>
+  </div>
+</div>
+<div id="_q2_1" class="takeQuestionDiv">
+  <h3 id="steptitle2" class="steptitle">Pergunta 2</h3>
+  <div id="stepcontent2" class="stepcontent">
+    <ol role="presentation">
+      <li>
+        <div class="field">
+          <fieldset>
+            <legend class="legend-visible">
+              <div class="vtbegenerated inlineVtbegenerated"><p>Capital of Brazil?</p></div>
+            </legend>
+            <table class="multiple-choice-table">
+              <tbody>
+                <tr>
+                  <td class="multiple-option-row"><input type="radio"></td>
+                  <td class="multiple-choice-numbering multiple-option-row">a.</td>
+                  <td><div class="vtbegenerated inlineVtbegenerated"><label><p>Brasilia</p></label></div></td>
+                </tr>
+              </tbody>
+            </table>
+          </fieldset>
+        </div>
+      </li>
+    </ol>
+  </div>
+</div>`;
 
 const FIXTURE_WITH_IMAGE = `
-<ul>
-  <li class="liItem">
-    <h3>Pergunta 1</h3>
-    <div class="vtbegenerated">
-      <p>Observe the image:</p>
-      <img src="data:image/png;base64,iVBORw0KGgo=" />
-    </div>
-    <div class="reviewQuestionsAnswerDiv">
-      <span class="answerNumLabelSpan">A.</span>
-      <span class="answerTextSpan">Option A</span>
-    </div>
-  </li>
-</ul>`;
+<div id="_q1_1" class="takeQuestionDiv">
+  <h3 class="steptitle">Pergunta 1</h3>
+  <div class="stepcontent">
+    <ol><li><div class="field">
+      <fieldset>
+        <legend class="legend-visible">
+          <div class="vtbegenerated inlineVtbegenerated">
+            <p>Observe the image:</p>
+            <img src="data:image/png;base64,iVBORw0KGgo=" />
+          </div>
+        </legend>
+        <table class="multiple-choice-table">
+          <tbody>
+            <tr>
+              <td class="multiple-option-row"><input type="radio"></td>
+              <td class="multiple-choice-numbering multiple-option-row">a.</td>
+              <td><div class="vtbegenerated inlineVtbegenerated"><label><p>Option A</p></label></div></td>
+            </tr>
+          </tbody>
+        </table>
+      </fieldset>
+    </div></li></ol>
+  </div>
+</div>`;
 
 describe("parseHTML", () => {
   it("extracts two questions with correct numbers and options", () => {
@@ -72,7 +117,7 @@ describe("parseHTML", () => {
     expect(result[0].imageBase64).toBeNull();
   });
 
-  it("strips trailing dot from option letters", () => {
+  it("uppercases option letters and strips trailing dot", () => {
     const result = parseHTML(FIXTURE_TWO_QUESTIONS);
     expect(result[0].options[0].letter).toBe("A");
     expect(result[0].options[0].letter).not.toContain(".");
