@@ -9,7 +9,7 @@
 ## Phases
 
 - [ ] **Phase 1: Foundation** - Parser TypeScript port, HTML input UI, dependency install
-- [x] **Phase 2: LLM Integration** - /api/solve route, Zod schemas, Gemini streaming, modes (completed 2026-04-03)
+- [x] **Phase 2: LLM Integration** - /api/solve route, Zod schemas, Gemini streaming, modes (completed 2026-04-03)
 - [ ] **Phase 3: Gabarito UI** - Results page, grid display, verbose cards, loading/error states
 
 ## Phase Details
@@ -59,8 +59,8 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 03-01: Results page and gabarito grid — app/gabarito/page.tsx with GabaritoGrid component, progressive streaming updates
-- [ ] 03-02: Verbose cards, loading, and error states — QuestionCard expandable, streaming progress indicator, error boundaries
+- [ ] 03-01-PLAN.md — GabaritoGrid component with skeleton cells, confidence colors, results state in page.tsx, reset button
+- [ ] 03-02-PLAN.md — QuestionCard expandable cards for Verbose mode, wired into results view with human verification
 
 ---
 
