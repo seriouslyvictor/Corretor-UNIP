@@ -2,6 +2,7 @@ import { NextRequest } from "next/server";
 import { streamText, Output } from "ai";
 import { google } from "@ai-sdk/google";
 import { solvedAnswerSchema, solveRequestSchema } from "@/lib/schemas";
+import { buildPrompt } from "@/lib/prompts";
 
 export const maxDuration = 60;
 
@@ -23,19 +24,8 @@ export async function POST(req: NextRequest) {
   }
 
   const { mode, questions } = parsed.data;
-  const isVerbose = mode === "verbose";
 
-  const questionBlocks = questions
-    .map(
-      (q, i) =>
-        `Question ${i + 1} (index ${i}): ${q.text}\n` +
-        q.options.map((o) => `  ${o.letter}: ${o.text}`).join("\n"),
-    )
-    .join("\n\n");
-
-  const systemInstruction = isVerbose
-    ? "You are a Brazilian university exam expert. For each question, return the correct answer letter and a brief explanation of why it is correct."
-    : "You are a Brazilian university exam expert. For each question, return only the correct answer letter. Do not include explanations.";
+  const promptText = buildPrompt(questions, mode);
 
   type ContentPart =
     | { type: "text"; text: string }
@@ -43,7 +33,7 @@ export async function POST(req: NextRequest) {
 
   const textPart: ContentPart = {
     type: "text",
-    text: `${systemInstruction}\n\nSolve the following ${questions.length} exam questions and return one answer object per question:\n\n${questionBlocks}`,
+    text: promptText,
   };
 
   const imageParts: ContentPart[] = questions
@@ -62,7 +52,7 @@ export async function POST(req: NextRequest) {
     providerOptions: {
       google: {
         thinkingConfig: {
-          thinkingBudget: -1,
+          thinkingBudget: mode === "no-bs" ? 0 : -1,
           includeThoughts: false,
         },
       },
