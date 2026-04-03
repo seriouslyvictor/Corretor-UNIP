@@ -1,6 +1,11 @@
 "use client";
 
 import { useState, useRef, useCallback } from "react";
+
+// Dev-only logger — tree-shaken to nothing in production builds
+const devLog = (...args: unknown[]) => {
+  if (process.env.NODE_ENV !== "production") console.log("[corretor]", ...args);
+};
 import { parseHTML } from "@/lib/parser";
 import type { ParsedQuestion } from "@/lib/schemas";
 
@@ -31,8 +36,7 @@ export default function Page() {
   const [uploadedFileName, setUploadedFileName] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isDragOver, setIsDragOver] = useState(false);
-  // parsedQuestions stored for downstream use (Phase 2 API call)
-  const [parsedQuestions, setParsedQuestions] = useState<ParsedQuestion[]>([]); // eslint-disable-line @typescript-eslint/no-unused-vars
+  const [parsedQuestions, setParsedQuestions] = useState<ParsedQuestion[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const readFile = useCallback((file: File) => {
@@ -42,10 +46,13 @@ export default function Page() {
       return;
     }
     setError(null);
+    devLog(`Reading file: ${file.name} (${(file.size / 1024).toFixed(1)} KB)`);
     const reader = new FileReader();
     reader.onload = (e) => {
-      setUploadedHTML(e.target?.result as string);
+      const html = e.target?.result as string;
+      setUploadedHTML(html);
       setUploadedFileName(file.name);
+      devLog(`File loaded: ${html.length} chars`);
     };
     reader.readAsText(file);
   }, []);
@@ -88,7 +95,9 @@ export default function Page() {
       );
       return;
     }
+    devLog(`Parsing HTML (${rawHTML.length} chars)...`);
     const questions = parseHTML(rawHTML);
+    devLog(`Parsed ${questions.length} questions:`, questions.map((q) => `Q${q.number} (${q.options.length} opts${q.imageBase64 ? ", img" : ""})`));
     if (questions.length === 0) {
       setError(
         "Nenhuma questão encontrada. Verifique se o HTML é da página de revisão da prova."
@@ -99,8 +108,9 @@ export default function Page() {
     setParsedQuestions(questions);
     setIsSubmitting(true);
     setPageState("loading");
+    devLog(`Entering loading state — mode: ${mode}, questions: ${questions.length} (Phase 2 API call pending)`);
     // Phase 2 will add the API call here
-  }, [uploadedHTML, pasteHTML]);
+  }, [uploadedHTML, pasteHTML, mode]);
 
   if (pageState === "loading") {
     return (
@@ -108,7 +118,7 @@ export default function Page() {
         <CircleNotch className="animate-spin size-8 text-primary" />
         <p className="text-base font-medium">Analisando questões...</p>
         <p className="text-sm text-muted-foreground">
-          Aguarde enquanto o Gemini resolve a prova.
+          {parsedQuestions.length} questões encontradas · Aguarde enquanto o Gemini resolve a prova.
         </p>
       </main>
     );
