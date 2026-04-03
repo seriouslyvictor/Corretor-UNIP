@@ -9,16 +9,16 @@
 
 - [ ] **INPUT-01**: User can upload a saved UNIP `.html` file and have it parsed client-side
 - [ ] **INPUT-02**: User can paste raw HTML source into a textarea and have it parsed client-side
-- [x] **INPUT-03**: Parser extracts question number, question text, all answer options (letter + text), and embedded images from the UNIP DOM structure (`li.liItem`, `.vtbegenerated p`, `.answerNumLabelSpan`, `.answerTextSpan`)
-- [x] **INPUT-04**: Images within questions are extracted as base64 strings and included in the LLM payload
+- [ ] **INPUT-03**: Parser extracts question number, question text, all answer options (letter + text), and embedded images from the UNIP DOM structure (`li.liItem`, `.vtbegenerated p`, `.answerNumLabelSpan`, `.answerTextSpan`)
+- [ ] **INPUT-04**: Images within questions are extracted as base64 strings and included in the LLM payload
 
 ### Solving
 
-- [x] **SOLVE-01**: Parsed questions are sent in a single batch POST request to `/api/solve`
-- [x] **SOLVE-02**: API route calls Google Gemini via Vercel AI SDK using `generateText` + `Output.array()` (AI SDK 6 pattern — `generateObject` is deprecated)
-- [x] **SOLVE-03**: Responses are structured per-question: `{ number, answer, explanation? }` validated with Zod
-- [ ] **SOLVE-04**: LLM routing via `thinkingBudget` on `gemini-2.5-flash` — `0` for fact-recall questions, `-1` (dynamic) for reasoning-heavy questions; detection via a lightweight classifier prompt or heuristic
-- [x] **SOLVE-05**: Streaming response used so partial results appear progressively (avoids Vercel Hobby 10s timeout)
+- [ ] **SOLVE-01**: Parsed questions are sent in a single batch POST request to `/api/solve`
+- [ ] **SOLVE-02**: API route calls Google Gemini via Vercel AI SDK using `generateText` + `Output.array()` (AI SDK 6 pattern — `generateObject` is deprecated)
+- [ ] **SOLVE-03**: Responses are structured per-question: `{ number, answer, explanation? }` validated with Zod
+- [x] **SOLVE-04**: LLM routing via `thinkingBudget` on `gemini-2.5-flash` — `0` for fact-recall questions, `-1` (dynamic) for reasoning-heavy questions; detection via a lightweight classifier prompt or heuristic. `solvedAnswers` state wired in `app/page.tsx`; ndjson streaming parsed per-line with Zod validation.
+- [ ] **SOLVE-05**: Streaming response used so partial results appear progressively (avoids Vercel Hobby 10s timeout)
 
 ### Modes
 
@@ -35,9 +35,9 @@
 
 ### Infrastructure
 
-- [x] **INFRA-01**: Vercel AI SDK (`ai@^6.0.0`, `@ai-sdk/google@^3.0.0`) installed and configured
-- [x] **INFRA-02**: `GOOGLE_GENERATIVE_AI_API_KEY` consumed from environment variables server-side only
-- [x] **INFRA-03**: API key never exposed to the client
+- [ ] **INFRA-01**: Vercel AI SDK (`ai@^6.0.0`, `@ai-sdk/google@^3.0.0`) installed and configured
+- [ ] **INFRA-02**: `GOOGLE_GENERATIVE_AI_API_KEY` consumed from environment variables server-side only
+- [ ] **INFRA-03**: API key never exposed to the client
 
 ## v2 Requirements
 
@@ -73,9 +73,9 @@
 |-------------|-------|--------|
 | INPUT-01, INPUT-02 | Phase 1 | Pending |
 | INPUT-03, INPUT-04 | Phase 1 | Pending |
-| INFRA-01, INFRA-02, INFRA-03 | Phase 1 | Complete (01-01) |
+| INFRA-01, INFRA-02, INFRA-03 | Phase 1 | Pending |
 | SOLVE-01, SOLVE-02, SOLVE-03 | Phase 2 | Pending |
-| SOLVE-04, SOLVE-05 | Phase 2 | Pending |
+| SOLVE-04, SOLVE-05 | Phase 2 | SOLVE-04 complete |
 | MODE-01, MODE-02, MODE-03 | Phase 2 | Pending |
 | RESULT-01, RESULT-02 | Phase 3 | Pending |
 | RESULT-03, RESULT-04 | Phase 3 | Pending |
