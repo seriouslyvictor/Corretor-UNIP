@@ -8,8 +8,8 @@
 
 ## Phases
 
-- [x] **Phase 1: Foundation** - Parser TypeScript port, HTML input UI, dependency install
-- [ ] **Phase 2: LLM Integration** - /api/solve route, Zod schemas, Gemini streaming, modes
+- [ ] **Phase 1: Foundation** - Parser TypeScript port, HTML input UI, dependency install
+- [x] **Phase 2: LLM Integration** - /api/solve route, Zod schemas, Gemini streaming, modes (completed 2026-04-03)
 - [ ] **Phase 3: Gabarito UI** - Results page, grid display, verbose cards, loading/error states
 
 ## Phase Details
@@ -26,9 +26,9 @@
 **Plans**: 3 plans
 
 Plans:
-- [x] 01-01: Install dependencies — Add ai@^6.0.0, @ai-sdk/google@^3.0.0, zod@^3.23.8 via pnpm; configure GOOGLE_GENERATIVE_AI_API_KEY in .env.local
-- [x] 01-02: Port parser to TypeScript — Translate gabarito.js DOM-parsing logic into lib/parser.ts with image extraction
-- [x] 01-03: HTML input UI — Build app/page.tsx as interactive Client Component with file upload and paste textarea
+- [ ] 01-01: Install dependencies — Add ai@^6.0.0, @ai-sdk/google@^3.0.0, zod@^3.23.8 via pnpm; configure GOOGLE_GENERATIVE_AI_API_KEY in .env.local
+- [ ] 01-02: Port parser to TypeScript — Translate gabarito.js DOM-parsing logic into lib/parser.ts with image extraction
+- [ ] 01-03: HTML input UI — Build app/page.tsx as interactive Client Component with file upload and paste textarea
 
 ### Phase 2: LLM Integration
 **Goal**: Parsed questions are sent to Gemini via a streaming API route and return a validated, typed array of answers — with mode selection (No BS / Verbose) and thinkingBudget routing baked in.
@@ -43,7 +43,7 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 02-01: Zod schemas and solve route — lib/schemas.ts + POST /api/solve using streamText + Output.array()
+- [x] 02-01: Zod schemas and solve route — lib/schemas.ts + POST /api/solve using streamText + Output.array()
 - [ ] 02-02: Modes and thinking routing — mode param wiring, prompt builder, thinkingBudget heuristic, mode selector UI
 
 ### Phase 3: Gabarito UI
@@ -96,8 +96,8 @@ Plans:
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1 — Foundation | 3/3 | Complete | 2026-04-03 |
-| 2 — LLM Integration | 0/2 | Not started | - |
+| 1 — Foundation | 0/3 | Not started | - |
+| 2 — LLM Integration | 1/1 | Complete   | 2026-04-03 |
 | 3 — Gabarito UI | 0/2 | Not started | - |
 
 ---
