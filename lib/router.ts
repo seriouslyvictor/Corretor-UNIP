@@ -91,10 +91,25 @@ async function classifyQuestion(question: ParsedQuestion, index: number): Promis
   return result.object.tier;
 }
 
-// --- 429 helpers ---
+// --- Overload detection (429 rate limit + 503 model unavailable) ---
 
-function isRateLimit(err: unknown): boolean {
-  return APICallError.isInstance(err) && err.statusCode === 429;
+// Covers both direct APICallError and AI SDK's AI_RetryError wrapper
+// (AI_RetryError is thrown when the SDK exhausts its internal retries; the real
+// status code lives in .lastError, not on the wrapper itself)
+const OVERLOAD_CODES = new Set([429, 503]);
+
+function isOverloaded(err: unknown): boolean {
+  if (APICallError.isInstance(err)) {
+    return OVERLOAD_CODES.has(err.statusCode ?? 0);
+  }
+  // AI_RetryError wraps the last APICallError — unwrap one level
+  if (err instanceof Error) {
+    const last = (err as { lastError?: unknown }).lastError;
+    if (APICallError.isInstance(last)) {
+      return OVERLOAD_CODES.has(last.statusCode ?? 0);
+    }
+  }
+  return false;
 }
 
 function sleep(ms: number) {
@@ -150,7 +165,7 @@ async function solveWithRetry(
     try {
       return await solveOnce(model, question, index, mode);
     } catch (err) {
-      if (!isRateLimit(err) || attempt === maxRetries) throw err;
+      if (!isOverloaded(err) || attempt === maxRetries) throw err;
       const delay = Math.min(2000 * 2 ** (attempt - 1), 16000); // 2s → 4s → 8s → cap 16s
       onStatus?.({
         __type: "status",
@@ -183,7 +198,7 @@ export async function solveWithFallback(
   try {
     return await solveOnce(google(MODELS.full), question, index, mode);
   } catch (err) {
-    if (!isRateLimit(err)) throw err;
+    if (!isOverloaded(err)) throw err;
     onStatus?.({
       __type: "status",
       event: "fallback_used",
