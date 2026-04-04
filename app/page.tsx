@@ -10,10 +10,11 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
-import { UploadSimple, Lightning, ChatText, Warning, CircleNotch } from "@phosphor-icons/react";
+import { UploadSimple, Lightning, ChatText, Warning, CircleNotch, ArrowLeft } from "@phosphor-icons/react";
+import { GabaritoGrid } from "@/components/gabarito-grid";
 
 type Mode = "no-bs" | "verbose";
-type PageState = "input" | "loading";
+type PageState = "input" | "results";
 
 export default function Page() {
   const [pageState, setPageState] = useState<PageState>("input");
@@ -63,6 +64,14 @@ export default function Page() {
     if (file) readFile(file);
   }
 
+  function handleReset() {
+    setPageState("input");
+    setParsedQuestions([]);
+    setSolvedAnswers([]);
+    setError(null);
+    setIsLoading(false);
+  }
+
   async function handleSubmit() {
     const rawHTML = uploadedHTML || pasteHTML.trim();
     if (!rawHTML) {
@@ -77,7 +86,7 @@ export default function Page() {
     setError(null);
     setParsedQuestions(questions);
     setSolvedAnswers([]);
-    setPageState("loading");
+    setPageState("results");
     setIsLoading(true);
 
     try {
@@ -124,21 +133,59 @@ export default function Page() {
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Erro desconhecido. Tente novamente.");
-      setPageState("input");
       setIsLoading(false);
       return;
     }
 
-    setPageState("input");
     setIsLoading(false);
   }
 
-  if (pageState === "loading") {
+  if (pageState === "results") {
     return (
-      <main className="flex min-h-svh flex-col items-center justify-center gap-4">
-        <CircleNotch className="animate-spin size-8 text-primary" />
-        <p className="text-base font-medium">Analisando questões...</p>
-        <p className="text-sm text-muted-foreground">Aguarde enquanto o Gemini resolve a prova.</p>
+      <main className="flex min-h-svh flex-col items-center px-4 py-12 gap-6">
+        <header className="text-center">
+          <h1 className="font-heading text-2xl font-semibold">Corretor UNIP</h1>
+          {isLoading && (
+            <p className="text-sm text-muted-foreground flex items-center justify-center gap-1 mt-1">
+              <CircleNotch className="animate-spin size-4" />
+              Analisando questões...
+            </p>
+          )}
+          {!isLoading && !error && (
+            <p className="text-sm text-muted-foreground mt-1">
+              Prova corrigida!
+            </p>
+          )}
+        </header>
+
+        <div className="w-full max-w-lg flex flex-col gap-4">
+          {error && (
+            <div
+              className="rounded-lg border border-destructive/50 bg-destructive/10 p-4 text-sm text-destructive flex items-start gap-2"
+              role="alert"
+            >
+              <Warning size={18} className="mt-0.5 shrink-0" />
+              <div>
+                <p className="font-medium">{error}</p>
+                <p className="text-destructive/80 mt-1">Verifique sua conexão e tente novamente.</p>
+              </div>
+            </div>
+          )}
+
+          <GabaritoGrid
+            parsedQuestions={parsedQuestions}
+            solvedAnswers={solvedAnswers}
+            isStreaming={isLoading}
+          />
+
+          <Button
+            variant="outline"
+            className="w-full gap-2"
+            onClick={handleReset}
+          >
+            <ArrowLeft size={16} /> Nova prova
+          </Button>
+        </div>
       </main>
     );
   }
@@ -242,25 +289,6 @@ export default function Page() {
           <p className="text-sm text-destructive flex items-center gap-1" role="alert">
             <Warning size={16} /> {error}
           </p>
-        )}
-
-        {solvedAnswers.length > 0 && (
-          <div className="border border-border rounded-lg p-4">
-            <p className="text-sm font-medium mb-2">
-              Gabarito ({solvedAnswers.length}/{parsedQuestions.length})
-            </p>
-            <div className="grid grid-cols-5 gap-2">
-              {solvedAnswers.map((sa) => (
-                <div
-                  key={sa.questionIndex}
-                  className="flex flex-col items-center rounded bg-muted p-2"
-                >
-                  <span className="text-xs text-muted-foreground">{sa.questionIndex + 1}</span>
-                  <span className="font-heading font-semibold text-primary">{sa.answer}</span>
-                </div>
-              ))}
-            </div>
-          </div>
         )}
       </div>
     </main>
