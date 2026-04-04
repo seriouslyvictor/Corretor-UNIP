@@ -19,13 +19,17 @@ Given a UNIP test HTML page, return the correct answer for every question — fa
 
 ### Active
 
-- [ ] Port HTML parser to TypeScript (`lib/parser.ts`) — extract question text, options, images (base64)
-- [ ] HTML input UI in Next.js — file upload + paste textarea, triggering parse on submit
-- [ ] `POST /api/solve` route — accepts `{ mode, questions[] }`, calls Gemini via Vercel AI SDK, returns structured answers
-- [ ] Structured LLM output via Zod schemas — `{ number, answer, explanation? }` per question
-- [ ] Mode selector — "No BS" (letter only) vs "Verbose" (letter + explanation)
-- [ ] Gabarito results page — grid for No BS, expandable cards for Verbose
-- [ ] LLM routing — detect reasoning-heavy vs fact-recall questions and adjust prompt strategy accordingly
+_(all v1.0 requirements validated — see Validated section)_
+
+### Validated (continued)
+
+- ✓ Port HTML parser to TypeScript (`lib/parser.ts`) — Validated in Phase 01: parser-foundation
+- ✓ HTML input UI in Next.js — file upload + paste textarea — Validated in Phase 01: parser-foundation
+- ✓ `POST /api/solve` route — ndjson streaming, Gemini via Vercel AI SDK — Validated in Phase 02: llm-integration
+- ✓ Structured LLM output via Zod schemas — `SolvedAnswer` with answer, confidence, explanation — Validated in Phase 02: llm-integration
+- ✓ Mode selector — "No BS" vs "Verbose" — Validated in Phase 02: llm-integration
+- ✓ Gabarito results page — progressive streaming grid + expandable verbose cards — Validated in Phase 03: gabarito-ui
+- ✓ LLM routing — complexity classifier routes reasoning vs fact-recall questions — Validated in Phase 02: llm-integration
 
 ### Out of Scope
 
