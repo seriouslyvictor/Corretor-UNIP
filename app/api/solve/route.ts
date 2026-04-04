@@ -35,12 +35,7 @@ export async function POST(req: NextRequest) {
 
         if (!question.text.trim()) {
           console.warn(`[solve] Q${i + 1} has empty question text — skipping`);
-          enqueue({
-            questionIndex: i,
-            answer: "A" as const,
-            confidence: "low" as const,
-            explanation: `Questão ${i + 1} não pôde ser analisada.`,
-          });
+          enqueue({ questionIndex: i, __error: true as const, message: "Questão sem texto — não foi possível analisar." });
           continue;
         }
 
@@ -50,7 +45,7 @@ export async function POST(req: NextRequest) {
           enqueue(answer);
         } catch (err) {
           console.error(`[solve] Q${i + 1} failed:`, err);
-          enqueue({ questionIndex: i, answer: "A" as const, confidence: "low" as const });
+          enqueue({ questionIndex: i, __error: true as const, message: "Não foi possível obter resposta." });
         }
       }
 

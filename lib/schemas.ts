@@ -7,7 +7,7 @@ export const parsedOptionSchema = z.object({
 
 export const parsedQuestionSchema = z.object({
   number: z.number().int().positive(),
-  text: z.string(), // question body text
+  text: z.string(), // question body text — empty strings are handled per-question in the API route
   options: z.array(parsedOptionSchema), // answer choices
   imageBase64: z.string().nullable(), // base64 PNG if question has image, null otherwise
 });
@@ -30,7 +30,14 @@ export const solvedAnswerSchema = z.object({
 
 export const solvedAnswersSchema = z.array(solvedAnswerSchema);
 
+export const solveErrorSchema = z.object({
+  questionIndex: z.number().int().min(0),
+  __error: z.literal(true),
+  message: z.string(),
+});
+
 export type ParsedOption = z.infer<typeof parsedOptionSchema>;
 export type ParsedQuestion = z.infer<typeof parsedQuestionSchema>;
 export type SolveRequest = z.infer<typeof solveRequestSchema>;
 export type SolvedAnswer = z.infer<typeof solvedAnswerSchema>;
+export type SolveError = z.infer<typeof solveErrorSchema>;

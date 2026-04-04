@@ -2,8 +2,8 @@
 
 import { useState, useRef } from "react";
 import { parseHTML } from "@/lib/parser";
-import type { ParsedQuestion, SolvedAnswer } from "@/lib/schemas";
-import { solvedAnswerSchema } from "@/lib/schemas";
+import type { ParsedQuestion, SolvedAnswer, SolveError } from "@/lib/schemas";
+import { solvedAnswerSchema, solveErrorSchema } from "@/lib/schemas";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -27,6 +27,7 @@ export default function Page() {
   const [isDragOver, setIsDragOver] = useState(false);
   const [parsedQuestions, setParsedQuestions] = useState<ParsedQuestion[]>([]);
   const [solvedAnswers, setSolvedAnswers] = useState<SolvedAnswer[]>([]);
+  const [failedQuestions, setFailedQuestions] = useState<SolveError[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [rateLimitMessage, setRateLimitMessage] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -70,9 +71,63 @@ export default function Page() {
     setPageState("input");
     setParsedQuestions([]);
     setSolvedAnswers([]);
+    setFailedQuestions([]);
     setError(null);
     setIsLoading(false);
     setRateLimitMessage(null);
+  }
+
+  async function handleRetry(questionIndex: number) {
+    const question = parsedQuestions[questionIndex];
+    if (!question) return;
+
+    // Optimistically remove from failed so the cell goes back to "missed" while retrying
+    setFailedQuestions((prev) => prev.filter((e) => e.questionIndex !== questionIndex));
+
+    try {
+      const res = await fetch("/api/solve", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ questions: [question], mode }),
+      });
+      if (!res.ok || !res.body) throw new Error(`${res.status}`);
+
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = "";
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split("\n");
+        buffer = lines.pop() ?? "";
+        for (const line of lines) {
+          const trimmed = line.trim();
+          if (!trimmed) continue;
+          try {
+            const raw = JSON.parse(trimmed);
+            if (raw.__type === "status") continue;
+            if (raw.__error === true) {
+              // retry failed — restore with original questionIndex
+              setFailedQuestions((prev) => [...prev, { ...solveErrorSchema.parse(raw), questionIndex }]);
+              continue;
+            }
+            // remap index 0 (from single-question POST) back to original
+            const parsed = solvedAnswerSchema.parse(raw);
+            setSolvedAnswers((prev) => [...prev, { ...parsed, questionIndex }]);
+          } catch {
+            // skip malformed
+          }
+        }
+      }
+    } catch {
+      // restore error if request itself failed
+      setFailedQuestions((prev) => [
+        ...prev,
+        { questionIndex, __error: true as const, message: "Não foi possível obter resposta." },
+      ]);
+    }
   }
 
   async function handleSubmit() {
@@ -122,6 +177,11 @@ export default function Page() {
               setRateLimitMessage(raw.message);
               continue;
             }
+            if (raw.__error === true) {
+              const err = solveErrorSchema.parse(raw);
+              setFailedQuestions((prev) => [...prev, err]);
+              continue;
+            }
             const parsed = solvedAnswerSchema.parse(raw);
             setSolvedAnswers((prev) => [...prev, parsed]);
           } catch {
@@ -133,8 +193,12 @@ export default function Page() {
       // flush remaining buffer
       if (buffer.trim()) {
         try {
-          const parsed = solvedAnswerSchema.parse(JSON.parse(buffer.trim()));
-          setSolvedAnswers((prev) => [...prev, parsed]);
+          const raw = JSON.parse(buffer.trim());
+          if (raw.__error === true) {
+            setFailedQuestions((prev) => [...prev, solveErrorSchema.parse(raw)]);
+          } else {
+            setSolvedAnswers((prev) => [...prev, solvedAnswerSchema.parse(raw)]);
+          }
         } catch {
           // skip
         }
@@ -183,7 +247,9 @@ export default function Page() {
           <GabaritoGrid
             parsedQuestions={parsedQuestions}
             solvedAnswers={solvedAnswers}
+            failedQuestions={failedQuestions}
             isStreaming={isLoading}
+            onRetry={handleRetry}
           />
 
           {mode === "verbose" && solvedAnswers.length > 0 && (
