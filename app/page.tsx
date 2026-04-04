@@ -28,6 +28,7 @@ export default function Page() {
   const [parsedQuestions, setParsedQuestions] = useState<ParsedQuestion[]>([]);
   const [solvedAnswers, setSolvedAnswers] = useState<SolvedAnswer[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [rateLimitMessage, setRateLimitMessage] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   function readFile(file: File) {
@@ -71,6 +72,7 @@ export default function Page() {
     setSolvedAnswers([]);
     setError(null);
     setIsLoading(false);
+    setRateLimitMessage(null);
   }
 
   async function handleSubmit() {
@@ -115,7 +117,12 @@ export default function Page() {
           const trimmed = line.trim();
           if (!trimmed) continue;
           try {
-            const parsed = solvedAnswerSchema.parse(JSON.parse(trimmed));
+            const raw = JSON.parse(trimmed);
+            if (raw.__type === "status") {
+              setRateLimitMessage(raw.message);
+              continue;
+            }
+            const parsed = solvedAnswerSchema.parse(raw);
             setSolvedAnswers((prev) => [...prev, parsed]);
           } catch {
             // skip malformed lines
@@ -149,7 +156,7 @@ export default function Page() {
           {isLoading && (
             <p className="text-sm text-muted-foreground flex items-center justify-center gap-1 mt-1">
               <CircleNotch className="animate-spin size-4" />
-              Analisando questões...
+              {rateLimitMessage ?? "Analisando questões..."}
             </p>
           )}
           {!isLoading && !error && (
