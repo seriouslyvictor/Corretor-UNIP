@@ -12,6 +12,7 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { UploadSimple, Lightning, ChatText, Warning, CircleNotch, ArrowLeft } from "@phosphor-icons/react";
 import { GabaritoGrid } from "@/components/gabarito-grid";
+import { QuestionCard } from "@/components/question-card";
 
 type Mode = "no-bs" | "verbose";
 type PageState = "input" | "results";
@@ -177,6 +178,24 @@ export default function Page() {
             solvedAnswers={solvedAnswers}
             isStreaming={isLoading}
           />
+
+          {mode === "verbose" && solvedAnswers.length > 0 && (
+            <div className="flex flex-col gap-2">
+              <p className="text-sm font-medium">Explicações</p>
+              {solvedAnswers
+                .slice()
+                .sort((a, b) => a.questionIndex - b.questionIndex)
+                .map((sa) => (
+                  <QuestionCard
+                    key={sa.questionIndex}
+                    questionNumber={sa.questionIndex + 1}
+                    answer={sa.answer}
+                    confidence={sa.confidence}
+                    explanation={sa.explanation ?? "Sem explicação disponível."}
+                  />
+                ))}
+            </div>
+          )}
 
           <Button
             variant="outline"
