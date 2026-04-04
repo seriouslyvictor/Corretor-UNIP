@@ -29,7 +29,7 @@
 ### Results
 
 - [x] **RESULT-01**: Gabarito grid displays question number + answer letter for all questions simultaneously
-- [ ] **RESULT-02**: Verbose mode shows expandable card per question with the explanation
+- [x] **RESULT-02**: Verbose mode shows expandable card per question with the explanation
 - [x] **RESULT-03**: Loading state shown while LLM is processing (streaming progress preferred)
 - [x] **RESULT-04**: Error state shown if API call fails, with actionable message
 
