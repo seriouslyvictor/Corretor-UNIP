@@ -59,7 +59,7 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 03-01-PLAN.md — GabaritoGrid component with skeleton cells, confidence colors, results state in page.tsx, reset button
+- [x] 03-01-PLAN.md — GabaritoGrid component with skeleton cells, confidence colors, results state in page.tsx, reset button
 - [ ] 03-02-PLAN.md — QuestionCard expandable cards for Verbose mode, wired into results view with human verification
 
 ---
@@ -98,7 +98,7 @@ Plans:
 |-------|----------------|--------|-----------|
 | 1 — Foundation | 0/3 | Not started | - |
 | 2 — LLM Integration | 2/2 | Complete   | 2026-04-03 |
-| 3 — Gabarito UI | 0/2 | Not started | - |
+| 3 — Gabarito UI | 1/2 | In progress | - |
 
 ---
 *Created: 2026-04-01*
