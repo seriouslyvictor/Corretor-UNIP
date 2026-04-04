@@ -4,6 +4,7 @@ title: Harden API route with model validation and rate limiting
 area: api
 files:
   - app/api/solve/route.ts
+  - lib/router.ts
 ---
 
 ## Problem
@@ -12,17 +13,35 @@ Two production-readiness gaps in the solve route before this can be deployed rel
 
 1. **Model existence not validated at startup.** `MODELS.full` and `MODELS.lite` are Gemini preview/experimental models. Preview models get deprecated without notice. Currently, a missing or retired model causes a silent runtime failure rather than a clear startup error.
 
-2. **No rate limit enforcement.** Both models have strict RPM/TPM quotas (preview tier). The route currently fires generateObject calls with no gating — if the chosen model hits its quota, requests error silently instead of falling back or waiting gracefully.
+2. **No rate limit enforcement.** Both models have strict RPM/TPM/RPD quotas (preview free tier). The route currently fires generateObject calls with no gating — quota exhaustion causes silent errors. The classifier also calls the lite model, so a 20-question test = ~40 lite calls.
 
-## Solution
+**Binding constraint:** 500 RPD (not 15 RPM) — at ~40 calls/test, that's ~12 tests/day total across all users on the free tier.
 
-1. **Startup model validation**
-   - On app init (or first request), call the Google AI list-models endpoint (`GET /v1beta/models`) using the configured API key
-   - Confirm `MODELS.full` and `MODELS.lite` both appear in the response
-   - If either is missing, throw with a clear error message naming the missing model — fail loudly rather than serving bad results
+## Solution — Phased
 
-2. **Dynamic rate limit enforcement**
-   - Track usage in-process (token-bucket or leaky-bucket per model)
-   - On each `generateObject` call, check available capacity for the chosen model
-   - If at limit: either wait (with timeout) or fall back to the other model tier
-   - Consider fetching current quota state from the Google AI quota API if available, rather than tracking from scratch
+### Now: Option A — Reactive (429-driven)
+
+- `instrumentation.ts` on startup: `GET /v1beta/models`, confirm `MODELS.full` and `MODELS.lite` are present, throw loud error if missing
+- In `route.ts` catch block: detect 429 status, exponential backoff + retry (up to N attempts)
+- Stream a visible "rate limited, retrying…" status to the client rather than silently waiting
+- No external dependencies
+
+### v2: Option E + C — Per-user keys + Self-hosted Redis
+
+**Two usage tiers for paying users:**
+- **Self-managed**: user provides their own Gemini API key → their quota, their problem
+- **Managed**: we provide the key, charge ~R$9.90/month to cover API costs
+
+**Rate limiting (managed users):**
+- Redis token bucket tracking rpm + rpd counters per model, with TTL
+- Self-hosted Redis on existing VPS (already running with domain) — no Upstash needed, no command limits, no cold-start penalty
+- Return 503 + `Retry-After` header to client when quota exceeded (proactive vs. silent retry)
+- Switch to paid Gemini limits later by changing one constant
+
+## Key decisions from brainstorm
+
+- Google AI quota API not available for free-tier API keys (Cloud Quotas API requires OAuth + GCP project)
+- Dynamic quota fetching from AI Studio page not viable (not a stable API)
+- 429 is ground truth — hardcode known limits as first-line defense, let 429 correct them
+- Self-hosted Redis preferred over Upstash: no limits, lower latency, already have the VPS
+- In-process token bucket skipped — resets on Vercel cold starts, not suitable for multi-user public app
