@@ -2,10 +2,10 @@
 gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: Photo Scan Support
-status: Defining requirements
+status: Ready to plan
 last_updated: "2026-04-04"
 progress:
-  total_phases: 0
+  total_phases: 3
   completed_phases: 0
   total_plans: 0
   completed_plans: 0
@@ -19,26 +19,48 @@ progress:
 
 ## Current Position
 
-Phase: Not started (defining requirements)
-Plan: —
-Status: Defining requirements
-Last activity: 2026-04-04 — Milestone v1.1 started
+Phase: 4 of 6 (Photo Input)
+Plan: — (not yet planned)
+Status: Ready to plan
+Last activity: 2026-04-04 — v1.1 roadmap created (Phases 4-6)
 
-## Project Reference
+Progress: [░░░░░░░░░░] 0%
 
-See: .planning/PROJECT.md (updated 2026-04-04)
+## Performance Metrics
 
-**Core value:** Given a UNIP test HTML page, return the correct answer for every question — fast, with no friction.
-**Current focus:** v1.1 Photo Scan Support
+**Velocity:**
+- Total plans completed: 0 (v1.1)
+- Average duration: —
+- Total execution time: —
+
+**By Phase:**
+
+| Phase | Plans | Total | Avg/Plan |
+|-------|-------|-------|----------|
+| - | - | - | - |
+
+*Updated after each plan completion*
 
 ## Accumulated Context
 
-- AI SDK 6: `streamText` + `Output.array()` — `generateObject` is deprecated
-- LLM: `gemini-2.5-flash` with `thinkingBudget: 0` (recall) or `-1` (dynamic reasoning)
-- Images: `{ type: 'image', image: base64String, mimeType: 'image/png' }` in message parts
-- Streaming needed to avoid Vercel Hobby 10s timeout
-- Packages: `ai@^6.0.0`, `@ai-sdk/google@^3.0.0`, `zod@^3.23.8`
-- Custom ReadableStream wrapping elementStream (toDataStreamResponse() not in ai@6.0.145)
-- SolvedAnswer schema: { questionIndex, answer (A-E), confidence, explanation? }
-- buildPrompt(questions, mode) in lib/prompts.ts — mode-specific prompt construction
-- PageState is input | results; isLoading boolean differentiates streaming vs complete
+### Decisions
+
+Recent decisions affecting current work:
+
+- Images use `{ type: 'image', image: base64String, mimeType: 'image/png' }` in AI SDK message parts
+- New `/api/extract` route returns `ParsedQuestion[]` — reuses existing `/api/solve` unchanged
+- Streaming required to stay under Vercel Hobby 10s timeout (applies to extract route too)
+
+### Pending Todos
+
+None yet.
+
+### Blockers/Concerns
+
+None yet.
+
+## Session Continuity
+
+Last session: 2026-04-04
+Stopped at: Roadmap created — ready to plan Phase 4
+Resume file: None

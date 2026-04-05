@@ -55,20 +55,20 @@ All shipped in v1 MVP (2026-04-04). See `.planning/milestones/v1-REQUIREMENTS.md
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| INPUT-01 | TBD | Pending |
-| INPUT-02 | TBD | Pending |
-| INPUT-03 | TBD | Pending |
-| VISION-01 | TBD | Pending |
-| VISION-02 | TBD | Pending |
-| VISION-03 | TBD | Pending |
-| OBS-01 | TBD | Pending |
-| OBS-02 | TBD | Pending |
+| INPUT-01 | Phase 4 | Pending |
+| INPUT-02 | Phase 4 | Pending |
+| INPUT-03 | Phase 4 | Pending |
+| VISION-01 | Phase 5 | Pending |
+| VISION-02 | Phase 5 | Pending |
+| VISION-03 | Phase 5 | Pending |
+| OBS-01 | Phase 6 | Pending |
+| OBS-02 | Phase 6 | Pending |
 
 **Coverage:**
 - v1.1 requirements: 8 total
-- Mapped to phases: 0 (pending roadmap)
-- Unmapped: 8 ⚠️
+- Mapped to phases: 8
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-04-04*
-*Last updated: 2026-04-04 — v1.1 initial definition*
+*Last updated: 2026-04-04 — v1.1 roadmap created, all requirements mapped*
