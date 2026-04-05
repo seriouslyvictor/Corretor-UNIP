@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Lightning, ChatText, Warning, CircleNotch, ArrowLeft, Code, Camera } from "@phosphor-icons/react";
+import { PhotoScanTab, type QueuedImage } from "@/components/photo-scan-tab";
 import { GabaritoGrid } from "@/components/gabarito-grid";
 import { QuestionCard } from "@/components/question-card";
 
@@ -316,7 +317,11 @@ export default function Page() {
             </Button>
           </>
         ) : (
-          <div className="text-sm text-muted-foreground text-center py-8">Em construção</div>
+          <PhotoScanTab
+            onExtract={(images: QueuedImage[]) => {
+              console.log("extract requested", images.length);
+            }}
+          />
         )}
 
         {error && (
