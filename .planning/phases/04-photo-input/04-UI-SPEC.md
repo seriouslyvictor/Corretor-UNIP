@@ -1,7 +1,8 @@
 ---
 phase: 4
 slug: photo-input
-status: draft
+status: approved
+reviewed_at: 2026-04-04
 shadcn_initialized: true
 preset: "radix-luma / baseColor: mist / cssVariables: true"
 created: 2026-04-04
