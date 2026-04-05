@@ -20,13 +20,46 @@ The full v1 flow is working end-to-end:
 - Expandable QuestionCard verbose cards (native `<details>/<summary>`)
 - LLM complexity routing (fact-recall vs reasoning via thinkingBudget)
 
-## Next Milestone Goals
+## Current Milestone: v1.1 Photo Scan Support
 
-_Not yet defined. Candidates from v2 requirements:_
-- UX-01: Toggle mode after results without re-parsing
-- UX-02: Copy gabarito to clipboard
-- DEPLOY-01: Vercel production deployment
-- PROV-01: Provider selector UI (Gemini / Claude / OpenAI)
+**Goal:** Allow users to photograph a physical UNIP test paper and get the same gabarito output via Gemini vision extraction.
+
+**Target features:**
+- New "Photo Scan" input mode (file upload + in-browser camera capture)
+- Multi-image upload (one photo per page)
+- Gemini vision pass to extract questions from images with user review step
+- Reuse existing `/api/solve` route with extracted questions
+- Same confidence-colored gabarito grid output
+
+## Requirements
+
+### Validated
+
+- ✓ HTML file upload + paste input — Phase 1
+- ✓ Client-side UNIP DOM parser — Phase 1
+- ✓ POST /api/solve streaming route (Gemini 2.5 Flash) — Phase 2
+- ✓ No BS / Verbose mode selector — Phase 2
+- ✓ LLM complexity routing (thinkingBudget) — Phase 2
+- ✓ Gabarito grid with confidence-colored letters — Phase 3
+- ✓ Expandable QuestionCard verbose cards — Phase 3
+- ✓ Error cells with per-question retry — Phase 3
+
+### Active
+
+- [ ] Photo Scan input mode (file upload + camera capture)
+- [ ] Multi-image upload for multi-page tests
+- [ ] Vision extraction route — send images to Gemini, return ParsedQuestion[]
+- [ ] Extracted question review UI before solving
+- [ ] Reuse /api/solve with vision-extracted questions
+
+### Out of Scope
+
+| Feature | Reason |
+|---------|--------|
+| Database / persistence | Stateless MVP — no user data stored |
+| Authentication / user accounts | Single-user local tool |
+| URL-based HTML fetching | UNIP portal requires login; file upload avoids auth complexity |
+| Multiple simultaneous LLM providers | Single provider per deploy; swappable via one import |
 
 ## Key Decisions
 
@@ -55,15 +88,6 @@ _Not yet defined. Candidates from v2 requirements:_
 - UNIP take-test DOM: `div.takeQuestionDiv` → `h3.steptitle` (number) → `legend.legend-visible` (text) → `table.multiple-choice-table` (options)
 - DOM differs from review-page structure — parser was rewritten post-checkpoint during Phase 1
 
-## Out of Scope
-
-| Feature | Reason |
-|---------|--------|
-| Database / persistence | Stateless MVP — no user data stored |
-| Authentication / user accounts | Single-user local tool |
-| URL-based HTML fetching | UNIP portal requires login; file upload avoids auth complexity |
-| Multiple simultaneous LLM providers | Single provider per deploy; swappable via one import |
-
 <details>
 <summary>v1 Planning History</summary>
 
@@ -74,5 +98,22 @@ _Not yet defined. Candidates from v2 requirements:_
 
 </details>
 
+## Evolution
+
+This document evolves at phase transitions and milestone boundaries.
+
+**After each phase transition** (via `/gsd-transition`):
+1. Requirements invalidated? → Move to Out of Scope with reason
+2. Requirements validated? → Move to Validated with phase reference
+3. New requirements emerged? → Add to Active
+4. Decisions to log? → Add to Key Decisions
+5. "What This Is" still accurate? → Update if drifted
+
+**After each milestone** (via `/gsd-complete-milestone`):
+1. Full review of all sections
+2. Core Value check — still the right priority?
+3. Audit Out of Scope — reasons still valid?
+4. Update Context with current state
+
 ---
-*Last updated: 2026-04-04 after v1 milestone completion*
+*Last updated: 2026-04-04 — Milestone v1.1 Photo Scan Support started*
