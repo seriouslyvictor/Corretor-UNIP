@@ -1,71 +1,31 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { parseHTML } from "@/lib/parser";
 import type { ParsedQuestion, SolvedAnswer, SolveError } from "@/lib/schemas";
 import { solvedAnswerSchema, solveErrorSchema } from "@/lib/schemas";
-import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { Separator } from "@/components/ui/separator";
-import { UploadSimple, Lightning, ChatText, Warning, CircleNotch, ArrowLeft } from "@phosphor-icons/react";
+import { Lightning, ChatText, Warning, CircleNotch, ArrowLeft, Code, Camera } from "@phosphor-icons/react";
 import { GabaritoGrid } from "@/components/gabarito-grid";
 import { QuestionCard } from "@/components/question-card";
 
 type Mode = "no-bs" | "verbose";
 type PageState = "input" | "results";
+type InputTab = "html" | "photo";
 
 export default function Page() {
   const [pageState, setPageState] = useState<PageState>("input");
   const [mode, setMode] = useState<Mode>("no-bs");
+  const [tab, setTab] = useState<InputTab>("html");
   const [pasteHTML, setPasteHTML] = useState("");
-  const [uploadedHTML, setUploadedHTML] = useState<string | null>(null);
-  const [uploadedFileName, setUploadedFileName] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [isDragOver, setIsDragOver] = useState(false);
   const [parsedQuestions, setParsedQuestions] = useState<ParsedQuestion[]>([]);
   const [solvedAnswers, setSolvedAnswers] = useState<SolvedAnswer[]>([]);
   const [failedQuestions, setFailedQuestions] = useState<SolveError[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [rateLimitMessage, setRateLimitMessage] = useState<string | null>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
-
-  function readFile(file: File) {
-    if (!file.name.endsWith(".html") && !file.name.endsWith(".htm")) {
-      setError("Apenas arquivos .html são aceitos.");
-      return;
-    }
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      setUploadedHTML(e.target?.result as string);
-      setUploadedFileName(file.name);
-      setError(null);
-    };
-    reader.readAsText(file);
-  }
-
-  function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    if (file) readFile(file);
-  }
-
-  function handleDragOver(e: React.DragEvent) {
-    e.preventDefault();
-    setIsDragOver(true);
-  }
-
-  function handleDragLeave() {
-    setIsDragOver(false);
-  }
-
-  function handleDrop(e: React.DragEvent) {
-    e.preventDefault();
-    setIsDragOver(false);
-    const file = e.dataTransfer.files?.[0];
-    if (file) readFile(file);
-  }
 
   function handleReset() {
     setPageState("input");
@@ -131,7 +91,7 @@ export default function Page() {
   }
 
   async function handleSubmit() {
-    const rawHTML = uploadedHTML || pasteHTML.trim();
+    const rawHTML = pasteHTML.trim();
     if (!rawHTML) {
       setError("Nenhuma questão encontrada. Verifique se o HTML é da página de revisão da prova.");
       return;
@@ -287,95 +247,77 @@ export default function Page() {
       <header className="text-center">
         <h1 className="font-heading text-2xl font-semibold">Corretor UNIP</h1>
         <p className="text-base text-muted-foreground">
-          Cole o HTML da revisão de prova ou carregue o arquivo salvo.
+          Cole o HTML da revisão de prova abaixo.
         </p>
       </header>
 
       <div className="w-full max-w-lg flex flex-col gap-6">
-        <Card
-          tabIndex={0}
-          onClick={() => fileInputRef.current?.click()}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" || e.key === " ") {
-              e.preventDefault();
-              fileInputRef.current?.click();
-            }
-          }}
-          onDragOver={handleDragOver}
-          onDragLeave={handleDragLeave}
-          onDrop={handleDrop}
-          className={cn(
-            "cursor-pointer transition-colors",
-            isDragOver && "border-primary bg-primary/5",
-          )}
-        >
-          <CardContent className="flex flex-col items-center gap-2 border-dashed border-border py-8">
-            <UploadSimple className="size-8 text-muted-foreground" />
-            {uploadedFileName ? (
-              <p className="text-sm text-muted-foreground">{uploadedFileName}</p>
-            ) : (
-              <>
-                <p className="text-sm font-semibold">Carregar arquivo</p>
-                <p className="text-sm text-muted-foreground text-center">
-                  Arraste o .html aqui ou clique para escolher
-                </p>
-              </>
-            )}
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept=".html,.htm"
-              className="hidden"
-              onChange={handleFileChange}
-            />
-          </CardContent>
-        </Card>
-
-        <div className="relative flex items-center">
-          <Separator className="flex-1" />
-          <span className="px-3 text-xs text-muted-foreground">ou</span>
-          <Separator className="flex-1" />
-        </div>
-
-        <div className="flex flex-col gap-2">
-          <Label htmlFor="paste-html">Código-fonte HTML</Label>
-          <Textarea
-            id="paste-html"
-            className="min-h-[160px] font-mono text-sm"
-            placeholder="Cole o HTML aqui..."
-            value={pasteHTML}
-            onChange={(e) => setPasteHTML(e.target.value)}
-          />
-        </div>
-
+        {/* Tab toggle */}
         <div className="border border-border rounded-lg p-1 flex gap-1">
           <Button
-            variant={mode === "no-bs" ? "default" : "outline"}
+            variant={tab === "html" ? "default" : "ghost"}
             className="flex-1 gap-1"
-            aria-pressed={mode === "no-bs"}
-            onClick={() => setMode("no-bs")}
+            aria-pressed={tab === "html"}
+            onClick={() => setTab("html")}
           >
-            <Lightning size={16} /> No BS
+            <Code size={16} /> HTML
           </Button>
           <Button
-            variant={mode === "verbose" ? "default" : "outline"}
+            variant={tab === "photo" ? "default" : "ghost"}
             className="flex-1 gap-1"
-            aria-pressed={mode === "verbose"}
-            onClick={() => setMode("verbose")}
+            aria-pressed={tab === "photo"}
+            onClick={() => setTab("photo")}
           >
-            <ChatText size={16} /> Verbose
+            <Camera size={16} /> Foto
           </Button>
         </div>
 
-        <Button
-          variant="default"
-          size="lg"
-          className="w-full"
-          onClick={handleSubmit}
-          disabled={isLoading}
-        >
-          Corrigir prova
-        </Button>
+        {/* Tab content */}
+        {tab === "html" ? (
+          <>
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="paste-html">Código-fonte HTML</Label>
+              <Textarea
+                id="paste-html"
+                className="min-h-[160px] font-mono text-sm"
+                placeholder="Cole o HTML aqui..."
+                value={pasteHTML}
+                onChange={(e) => setPasteHTML(e.target.value)}
+              />
+            </div>
+
+            <div className="border border-border rounded-lg p-1 flex gap-1">
+              <Button
+                variant={mode === "no-bs" ? "default" : "outline"}
+                className="flex-1 gap-1"
+                aria-pressed={mode === "no-bs"}
+                onClick={() => setMode("no-bs")}
+              >
+                <Lightning size={16} /> No BS
+              </Button>
+              <Button
+                variant={mode === "verbose" ? "default" : "outline"}
+                className="flex-1 gap-1"
+                aria-pressed={mode === "verbose"}
+                onClick={() => setMode("verbose")}
+              >
+                <ChatText size={16} /> Verbose
+              </Button>
+            </div>
+
+            <Button
+              variant="default"
+              size="lg"
+              className="w-full"
+              onClick={handleSubmit}
+              disabled={isLoading}
+            >
+              Corrigir prova
+            </Button>
+          </>
+        ) : (
+          <div className="text-sm text-muted-foreground text-center py-8">Em construção</div>
+        )}
 
         {error && (
           <p className="text-sm text-destructive flex items-center gap-1" role="alert">
