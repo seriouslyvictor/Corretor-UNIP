@@ -13,6 +13,23 @@ import { GabaritoGrid } from "@/components/gabarito-grid";
 import { QuestionCard } from "@/components/question-card";
 
 type Mode = "no-bs" | "verbose";
+
+async function resolveImages(questions: ParsedQuestion[]): Promise<ParsedQuestion[]> {
+  return Promise.all(
+    questions.map(async (q) => {
+      if (!q.imageBase64?.startsWith("http")) return q;
+      try {
+        const res = await fetch(q.imageBase64, { credentials: "include" });
+        const blob = await res.blob();
+        const buffer = await blob.arrayBuffer();
+        const base64 = btoa(String.fromCharCode(...new Uint8Array(buffer)));
+        return { ...q, imageBase64: `data:${blob.type};base64,${base64}` };
+      } catch {
+        return { ...q, imageBase64: null };
+      }
+    })
+  );
+}
 type PageState = "input" | "results";
 type InputTab = "html" | "photo";
 
@@ -39,8 +56,9 @@ export default function Page() {
   }
 
   async function handleRetry(questionIndex: number) {
-    const question = parsedQuestions[questionIndex];
-    if (!question) return;
+    const raw = parsedQuestions[questionIndex];
+    if (!raw) return;
+    const [question] = await resolveImages([raw]);
 
     // Optimistically remove from failed so the cell goes back to "missed" while retrying
     setFailedQuestions((prev) => prev.filter((e) => e.questionIndex !== questionIndex));
@@ -97,11 +115,12 @@ export default function Page() {
       setError("Nenhuma questão encontrada. Verifique se o HTML é da página de revisão da prova.");
       return;
     }
-    const questions = parseHTML(rawHTML);
+    let questions = parseHTML(rawHTML);
     if (questions.length === 0) {
       setError("Nenhuma questão encontrada. Verifique se o HTML é da página de revisão da prova.");
       return;
     }
+    questions = await resolveImages(questions);
     setError(null);
     setParsedQuestions(questions);
     setSolvedAnswers([]);
@@ -217,8 +236,7 @@ export default function Page() {
             <div className="flex flex-col gap-2">
               <p className="text-sm font-medium">Explicações</p>
               {solvedAnswers
-                .slice()
-                .sort((a, b) => a.questionIndex - b.questionIndex)
+                .toSorted((a, b) => a.questionIndex - b.questionIndex)
                 .map((sa) => (
                   <QuestionCard
                     key={sa.questionIndex}

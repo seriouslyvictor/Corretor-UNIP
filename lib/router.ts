@@ -120,7 +120,7 @@ function sleep(ms: number) {
 
 type ContentPart =
   | { type: "text"; text: string }
-  | { type: "image"; image: string; mimeType: "image/png" };
+  | { type: "image"; image: string; mimeType?: string };
 
 async function solveOnce(
   model: ReturnType<typeof google>,
@@ -131,7 +131,11 @@ async function solveOnce(
   const promptText = buildSinglePrompt(question, index, mode as "no-bs" | "verbose");
   const content: ContentPart[] = [{ type: "text", text: promptText }];
   if (question.imageBase64) {
-    content.push({ type: "image", image: question.imageBase64, mimeType: "image/png" });
+    if (question.imageBase64.startsWith("data:")) {
+      content.push({ type: "image", image: question.imageBase64 });
+    } else {
+      content.push({ type: "image", image: question.imageBase64, mimeType: "image/png" });
+    }
   }
 
   const result = await generateObject({
