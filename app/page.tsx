@@ -298,7 +298,7 @@ export default function Page() {
               <Label htmlFor="paste-html">Código-fonte HTML</Label>
               <Textarea
                 id="paste-html"
-                className="min-h-[160px] font-mono text-sm"
+                className="h-[160px] max-h-[160px] font-mono text-sm resize-none overflow-hidden"
                 placeholder="Cole o HTML aqui..."
                 value={pasteHTML}
                 onChange={(e) => setPasteHTML(e.target.value)}
@@ -329,7 +329,7 @@ export default function Page() {
               size="lg"
               className="w-full"
               onClick={handleSubmit}
-              disabled={isLoading}
+              disabled={isLoading || !pasteHTML.trim()}
             >
               Corrigir prova
             </Button>
