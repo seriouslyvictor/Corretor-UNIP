@@ -22,14 +22,22 @@ export function parseHTML(rawHTML: string): ParsedQuestion[] {
     const number = parseInt(numMatch[1], 10);
 
     // Question text from legend > .vtbegenerated p
+    // Some questions use <p> wrappers; others place text directly in .vtbegenerated.
     const legend = item.querySelector("legend.legend-visible");
-    const textParagraphs = legend
-      ? legend.querySelectorAll(".vtbegenerated p")
-      : [];
-    const text = Array.from(textParagraphs)
-      .map((p) => p.textContent?.trim() ?? "")
-      .filter(Boolean)
-      .join("\n");
+    let text = "";
+    if (legend) {
+      const textParagraphs = legend.querySelectorAll(".vtbegenerated p");
+      if (textParagraphs.length > 0) {
+        text = Array.from(textParagraphs)
+          .map((p) => p.textContent?.trim() ?? "")
+          .filter(Boolean)
+          .join("\n");
+      } else {
+        // Fallback: text is a direct text node inside .vtbegenerated (no <p> wrapper)
+        const vtbe = legend.querySelector(".vtbegenerated");
+        text = vtbe?.textContent?.trim() ?? "";
+      }
+    }
 
     // Options from table.multiple-choice-table rows
     const rows = item.querySelectorAll("table.multiple-choice-table tr");
@@ -37,17 +45,24 @@ export function parseHTML(rawHTML: string): ParsedQuestion[] {
 
     rows.forEach((row) => {
       const letterEl = row.querySelector("td.multiple-choice-numbering");
-      const textCell = row.querySelector("td:last-child .vtbegenerated p");
-      if (!letterEl || !textCell) return;
+      if (!letterEl) return;
 
       const letter = (letterEl.textContent?.trim() ?? "")
         .replace(/\.$/, "")
         .toUpperCase();
       if (!letter) return;
 
+      // Option text may be in a <p> inside .vtbegenerated, or directly in .vtbegenerated
+      const vtbeEl = row.querySelector("td:last-child .vtbegenerated");
+      if (!vtbeEl) return;
+
+      const pEl = vtbeEl.querySelector("p");
+      const optionText = (pEl ?? vtbeEl).textContent?.trim() ?? "";
+      if (!optionText) return;
+
       options.push({
         letter,
-        text: textCell.textContent?.trim() ?? "",
+        text: optionText,
       });
     });
 

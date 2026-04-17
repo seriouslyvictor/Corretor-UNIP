@@ -4,7 +4,13 @@
       "Bash(npm init:*)",
       "Bash(npm install:*)",
       "Bash(pnpm add:*)",
-      "Bash(pnpm build:*)"
+      "Bash(pnpm build:*)",
+      "Bash(node:*)",
+      "Bash(npx vitest:*)",
+      "Skill(gsd:plan-phase)",
+      "Skill(gsd:execute-phase)",
+      "Bash(pnpm test:*)",
+      "Bash(pnpm typecheck:*)"
     ]
   }
 }

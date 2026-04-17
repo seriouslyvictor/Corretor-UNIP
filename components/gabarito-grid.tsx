@@ -53,6 +53,8 @@ export function GabaritoGrid({
   }
 
   const errorCount = failedQuestions.length;
+  const answersMap = new Map(solvedAnswers.map((a) => [a.questionIndex, a]));
+  const errorsMap = new Map(failedQuestions.map((e) => [e.questionIndex, e]));
 
   return (
     <>
@@ -66,8 +68,8 @@ export function GabaritoGrid({
         </p>
         <div className="grid grid-cols-5 gap-2">
           {parsedQuestions.map((_, i) => {
-            const sa = solvedAnswers.find((a) => a.questionIndex === i);
-            const err = failedQuestions.find((e) => e.questionIndex === i);
+            const sa = answersMap.get(i);
+            const err = errorsMap.get(i);
 
             if (sa) {
               return (

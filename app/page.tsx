@@ -14,21 +14,27 @@ import { QuestionCard } from "@/components/question-card";
 
 type Mode = "no-bs" | "verbose";
 
-async function resolveImages(questions: ParsedQuestion[]): Promise<ParsedQuestion[]> {
-  return Promise.all(
+async function resolveImages(
+  questions: ParsedQuestion[]
+): Promise<{ questions: ParsedQuestion[]; imagesFailed: number }> {
+  let imagesFailed = 0;
+  const resolved = await Promise.all(
     questions.map(async (q) => {
       if (!q.imageBase64?.startsWith("http")) return q;
       try {
         const res = await fetch(q.imageBase64, { credentials: "include" });
+        if (!res.ok) throw new Error(`${res.status}`);
         const blob = await res.blob();
         const buffer = await blob.arrayBuffer();
         const base64 = btoa(String.fromCharCode(...new Uint8Array(buffer)));
         return { ...q, imageBase64: `data:${blob.type};base64,${base64}` };
       } catch {
+        imagesFailed++;
         return { ...q, imageBase64: null };
       }
     })
   );
+  return { questions: resolved, imagesFailed };
 }
 type PageState = "input" | "results";
 type InputTab = "html" | "photo";
@@ -44,6 +50,7 @@ export default function Page() {
   const [failedQuestions, setFailedQuestions] = useState<SolveError[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [rateLimitMessage, setRateLimitMessage] = useState<string | null>(null);
+  const [imagesFailed, setImagesFailed] = useState(0);
 
   function handleReset() {
     setPageState("input");
@@ -53,12 +60,13 @@ export default function Page() {
     setError(null);
     setIsLoading(false);
     setRateLimitMessage(null);
+    setImagesFailed(0);
   }
 
   async function handleRetry(questionIndex: number) {
     const raw = parsedQuestions[questionIndex];
     if (!raw) return;
-    const [question] = await resolveImages([raw]);
+    const { questions: [question] } = await resolveImages([raw]);
 
     // Optimistically remove from failed so the cell goes back to "missed" while retrying
     setFailedQuestions((prev) => prev.filter((e) => e.questionIndex !== questionIndex));
@@ -120,7 +128,9 @@ export default function Page() {
       setError("Nenhuma questão encontrada. Verifique se o HTML é da página de revisão da prova.");
       return;
     }
-    questions = await resolveImages(questions);
+    const { questions: resolved, imagesFailed: failed } = await resolveImages(questions);
+    questions = resolved;
+    setImagesFailed(failed);
     setError(null);
     setParsedQuestions(questions);
     setSolvedAnswers([]);
@@ -221,6 +231,21 @@ export default function Page() {
                 <p className="font-medium">{error}</p>
                 <p className="text-destructive/80 mt-1">Verifique sua conexão e tente novamente.</p>
               </div>
+            </div>
+          )}
+
+          {imagesFailed > 0 && (
+            <div
+              className="rounded-lg border border-yellow-500/50 bg-yellow-500/10 p-4 text-sm text-yellow-700 dark:text-yellow-400 flex items-start gap-2"
+              role="alert"
+            >
+              <Warning size={18} className="mt-0.5 shrink-0" />
+              <p>
+                {imagesFailed === 1
+                  ? "1 imagem não pôde ser carregada"
+                  : `${imagesFailed} imagens não puderam ser carregadas`}{" "}
+                (bloqueio de CORS do AVA). Questões com imagem podem ter precisão reduzida.
+              </p>
             </div>
           )}
 
