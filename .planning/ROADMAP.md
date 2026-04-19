@@ -98,7 +98,7 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 07-01-PLAN.md — Bookmarklet source file (chunked btoa IIFE, clipboard write + execCommand fallback)
+- [x] 07-01-PLAN.md — Bookmarklet source file (chunked btoa IIFE, clipboard write + execCommand fallback)
 - [ ] 07-02-PLAN.md — Instructions page at /bookmarklet (drag anchor, CSP warning, layout)
 
 ## Progress
@@ -113,7 +113,7 @@ Plans:
 | 4. Photo Input | v1.1 | 0/2 | Planned | - |
 | 5. Vision Extraction | v1.1 | 0/TBD | Not started | - |
 | 6. Observability | v1.1 | 0/TBD | Not started | - |
-| 7. Bookmarklet | v1.1 | 0/2 | Planned | - |
+| 7. Bookmarklet | v1.1 | 1/2 | In Progress | - |
 
 ---
 *Last updated: 2026-04-19 — Phase 7 planned (2 plans)*

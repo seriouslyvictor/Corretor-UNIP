@@ -2,10 +2,10 @@
 gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: Photo Scan Support
-status: executing
-stopped_at: Phase 4 complete — verification passed (9/9), 4 items need live browser check
-last_updated: "2026-04-05T03:06:08.430Z"
-last_activity: 2026-04-05 -- Phase 04 execution started
+status: planned
+stopped_at: Phase 7 plan 01 complete — bookmarklet source file created
+last_updated: "2026-04-19T00:00:00.000Z"
+last_activity: 2026-04-19 -- Phase 07 plan 01 executed (bookmarklet source file)
 progress:
   total_phases: 3
   completed_phases: 1
@@ -58,6 +58,10 @@ Recent decisions affecting current work:
 ### Pending Todos
 
 - `2026-04-19-fix-image-questions-cors-bookmarklet-or-extension.md` — Fix image question 401s via bookmarklet/extension running in UNIP origin (CORS-safe long-term fix)
+
+### Roadmap Evolution
+
+- Phase 7 added: Bookmarklet that runs on ava.ead.unip.br, inlines UNIP images as data-URIs, copies enriched HTML to clipboard
 
 ### Blockers/Concerns
 
