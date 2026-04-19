@@ -47,6 +47,7 @@ Plans:
 - [ ] **Phase 4: Photo Input** - User can upload images or capture via camera for photo scan
 - [ ] **Phase 5: Vision Extraction** - App extracts ParsedQuestion[] from images via Gemini and lets user review before solving
 - [ ] **Phase 6: Observability** - Photo scan flow is fully traceable via debug panel and structured logging
+- [ ] **Phase 7: Bookmarklet** - Browser bookmarklet runs on ava.ead.unip.br, inlines images as data-URIs, copies enriched HTML to clipboard
 
 ## Phase Details
 
@@ -87,9 +88,22 @@ Plans:
   3. Client logs mirror server-side events so the full scan lifecycle is visible in browser devtools
 **Plans**: TBD
 
+### Phase 7: Bookmarklet
+**Goal**: Browser bookmarklet runs on ava.ead.unip.br, inlines all question images as data-URIs into the page HTML, and copies the enriched HTML to clipboard — enabling Corretor to receive pre-fetched image data and bypassing the CORS 401 error in the HTML paste flow
+**Depends on**: Phase 1 (parser already handles data-URIs)
+**Success Criteria** (what must be TRUE):
+  1. User can drag the bookmarklet to their browser toolbar from a Corretor instructions page
+  2. Clicking the bookmarklet on a UNIP review page inlines all `<img>` sources as base64 data-URIs and copies the resulting HTML to clipboard
+  3. Pasting that clipboard content into Corretor produces image-aware AI answers (no CORS warning, no 401 errors)
+**Plans**: 2 plans
+
+Plans:
+- [ ] 07-01-PLAN.md — Bookmarklet source file (chunked btoa IIFE, clipboard write + execCommand fallback)
+- [ ] 07-02-PLAN.md — Instructions page at /bookmarklet (drag anchor, CSP warning, layout)
+
 ## Progress
 
-**Execution Order:** Phases execute in numeric order: 4 → 5 → 6
+**Execution Order:** Phases execute in numeric order: 4 → 5 → 6 → 7
 
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
@@ -99,6 +113,7 @@ Plans:
 | 4. Photo Input | v1.1 | 0/2 | Planned | - |
 | 5. Vision Extraction | v1.1 | 0/TBD | Not started | - |
 | 6. Observability | v1.1 | 0/TBD | Not started | - |
+| 7. Bookmarklet | v1.1 | 0/2 | Planned | - |
 
 ---
-*Last updated: 2026-04-04 — v1.1 roadmap created*
+*Last updated: 2026-04-19 — Phase 7 planned (2 plans)*
