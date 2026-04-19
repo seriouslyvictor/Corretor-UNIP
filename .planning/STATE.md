@@ -57,7 +57,7 @@ Recent decisions affecting current work:
 
 ### Pending Todos
 
-None yet.
+- `2026-04-19-fix-image-questions-cors-bookmarklet-or-extension.md` — Fix image question 401s via bookmarklet/extension running in UNIP origin (CORS-safe long-term fix)
 
 ### Blockers/Concerns
 
