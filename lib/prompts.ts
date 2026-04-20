@@ -5,7 +5,7 @@ type Mode = "no-bs" | "verbose";
 export function buildSinglePrompt(question: ParsedQuestion, index: number, mode: Mode): string {
   const modeInstruction =
     mode === "no-bs"
-      ? "Return ONLY the correct answer letter. Do NOT include explanations or reasoning."
+      ? "Return only the correct answer letter. No explanation needed in the output — reason carefully internally."
       : "Return the correct answer letter AND a brief explanation. Say why the correct answer is right and briefly note why the other options are wrong.";
 
   const opts = question.options.map((o) => `  ${o.letter}) ${o.text}`).join("\n");

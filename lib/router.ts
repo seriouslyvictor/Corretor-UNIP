@@ -144,7 +144,7 @@ async function solveOnce(
     providerOptions: {
       google: {
         thinkingConfig: {
-          thinkingBudget: mode === "no-bs" ? 1024 : -1,
+          thinkingBudget: -1,
           includeThoughts: false,
         },
       },
