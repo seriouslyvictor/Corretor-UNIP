@@ -152,7 +152,7 @@ async function solveOnce(
     messages: [{ role: "user", content }],
   });
 
-  return result.object;
+  return { ...result.object, questionIndex: index };
 }
 
 // --- Retry with exponential backoff (lite model) ---
