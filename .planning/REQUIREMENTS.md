@@ -77,26 +77,26 @@ Phases 4–6 were never executed. Relevant scope folded into v2.0 (PHOTO-01–05
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| INFRA-01 | TBD | Pending |
-| INFRA-02 | TBD | Pending |
-| INFRA-03 | TBD | Pending |
-| ACCESS-01 | TBD | Pending |
-| ACCESS-02 | TBD | Pending |
-| ACCESS-03 | TBD | Pending |
-| PAY-01 | TBD | Pending |
-| PAY-02 | TBD | Pending |
-| PAY-03 | TBD | Pending |
-| MKT-01 | TBD | Pending |
-| MKT-02 | TBD | Pending |
-| MKT-03 | TBD | Pending |
-| BM-01 | TBD | Pending |
-| BM-02 | TBD | Pending |
-| BM-03 | TBD | Pending |
-| BM-04 | TBD | Pending |
-| PHOTO-01 | TBD | Pending |
-| PHOTO-02 | TBD | Pending |
-| PHOTO-03 | TBD | Pending |
-| PHOTO-04 | TBD | Pending |
+| INFRA-01 | Phase 8 — Data Layer | Pending |
+| INFRA-02 | Phase 8 — Data Layer | Pending |
+| INFRA-03 | Phase 9 — Proxy & CORS | Pending |
+| ACCESS-01 | Phase 9 — Proxy & CORS | Pending |
+| ACCESS-02 | Phase 12 — Gate Logic | Pending |
+| ACCESS-03 | Phase 12 — Gate Logic | Pending |
+| PAY-01 | Phase 10 — Stripe & Paywall | Pending |
+| PAY-02 | Phase 10 — Stripe & Paywall | Pending |
+| PAY-03 | Phase 10 — Stripe & Paywall | Pending |
+| MKT-01 | Phase 11 — Marketing Pages | Pending |
+| MKT-02 | Phase 11 — Marketing Pages | Pending |
+| MKT-03 | Phase 10 — Stripe & Paywall | Pending |
+| BM-01 | Phase 13 — Bookmarklet v2 | Pending |
+| BM-02 | Phase 13 — Bookmarklet v2 | Pending |
+| BM-03 | Phase 13 — Bookmarklet v2 | Pending |
+| BM-04 | Phase 13 — Bookmarklet v2 | Pending |
+| PHOTO-01 | Phase 14 — Photo Flow | Pending |
+| PHOTO-02 | Phase 14 — Photo Flow | Pending |
+| PHOTO-03 | Phase 14 — Photo Flow | Pending |
+| PHOTO-04 | Phase 14 — Photo Flow | Pending |
 | PHOTO-05 | TBD | Pending |
 
 **Coverage:**
