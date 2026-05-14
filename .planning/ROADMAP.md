@@ -76,7 +76,11 @@ Plans:
   1. Running `drizzle-kit migrate` applies the `subscriptions` and `payment_events` tables to the local database with no errors
   2. A test script can write and read a row from `subscriptions` via the Drizzle singleton without runtime errors
   3. A test script can set and get a Redis key via the ioredis singleton without runtime errors
-**Plans**: TBD
+**Plans**: 2 plans
+
+Plans:
+- [ ] 08-01-PLAN.md -- Install deps, create schema, singletons, drizzle.config.ts, run db:generate + db:migrate
+- [ ] 08-02-PLAN.md -- Integration tests for Drizzle and ioredis singletons
 
 ### Phase 9: Proxy & CORS
 **Goal**: Every visitor receives an anonymous `cid` cookie on first load; `/api/solve` accepts credentialed cross-origin requests from `ava.ead.unip.br`; app deploys to VPS as Next.js standalone behind nginx
